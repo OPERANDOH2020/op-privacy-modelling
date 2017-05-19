@@ -1,0 +1,20 @@
+[   
+    {
+        "requester_id" : "Hospital",
+        "subject": "doctor",
+        "action": "Read",
+        "requested_data": "personalInfo.anthropometric.weight"
+    },
+    {
+        "requester_id" : "Hospital",
+        "subject": "doctor",
+        "action": "Update",
+        "requested_data": "personalInfo.anthropometric.weight"
+    },
+    {
+        "requester_id" : "Hospital",
+        "subject": "nurse",
+        "action": "Read",
+        "requested_data": "personalInfo.anthropometric.weight"
+    }
+]

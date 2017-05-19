@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<!--
+Schema for an Interoperability pattern; there are two core parts: i) the
+specification of an architecture, and ii) the state machine specification
+of the interoperability test behaviour. 
+
+-->
+
+<xs:schema version="1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+    <!-- automaton describing the states and transitions of the protocol -->
+    <xs:element name="lts">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="state"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+  <!-- description of individual automaton states -->
+    <xs:element name="state">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="label"/>
+                <xs:element ref="type"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="transition"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+  
+    <!-- label of the start state -->
+    <xs:element name="label" type="xs:NCName"/>
+
+    <!-- label of the end state -->
+    <xs:element name="type" type="xs:NCName"/>
+   
+    
+    <!-- label of the end state -->
+    <xs:element name="role" type="xs:NCName"/>
+    
+    <!-- label of the end state -->
+    <xs:element name="purpose" type="xs:NCName"/>
+    
+    <xs:element name="data" type="xs:NCName"/>
+  
+    <xs:element name="transition">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="to"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="action"/>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" ref="role"/>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" ref="purpose"/>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" ref="data"/>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" ref="disclose"/>
+                    <xs:element minOccurs="0" maxOccurs="1" name="consent" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <!-- label of the start state -->
+    <xs:element name="to" type="xs:NCName"/>
+
+
+    <xs:element name="disclose">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="organisation" type="xs:string"/>
+                <xs:element name="role" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="action">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="method" type="xs:string"/>
+                <xs:element minOccurs="0" maxOccurs="1" name="datainput" type="xs:any"/>
+                <xs:element minOccurs="0" maxOccurs="1" name="dataoutput" type="xs:any"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+</xs:schema>

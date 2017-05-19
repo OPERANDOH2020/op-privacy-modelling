@@ -1,0 +1,198 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://webprotege.stanford.edu/project/7VJDycJ5Q6gOXp6ZMCyBGj#"
+     xml:base="http://webprotege.stanford.edu/project/7VJDycJ5Q6gOXp6ZMCyBGj"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://webprotege.stanford.edu/project/7VJDycJ5Q6gOXp6ZMCyBGj"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://webprotege.stanford.edu/R3ki9AmjYpQPJeNd0Ynpq5 -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/R3ki9AmjYpQPJeNd0Ynpq5">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/RB6MsceXZl1GuSxPUB6Oh07"/>
+        <rdfs:label>Contact</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/R7OmvAVkQ7zcHrAwvx7BJhn -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/R7OmvAVkQ7zcHrAwvx7BJhn">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/RhsiIBVg7TCEIlXSUttAkN"/>
+        <rdfs:label>State</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/R7Yuo9Q7UJR8HXKxKFh0Et0 -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/R7Yuo9Q7UJR8HXKxKFh0Et0">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/R3ki9AmjYpQPJeNd0Ynpq5"/>
+        <rdfs:label>Telephone</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/R7hNHjJoLzljzMxz0HMkYRu -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/R7hNHjJoLzljzMxz0HMkYRu">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/R8LEtqNiQcLRvdiFLuAIqVy"/>
+        <rdfs:label>Weight</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/R7ojWRPb5P0gZ17JeRqSFPF -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/R7ojWRPb5P0gZ17JeRqSFPF">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/RhsiIBVg7TCEIlXSUttAkN"/>
+        <rdfs:label>Street</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/R811Md8taZOJwKBjasqch9C -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/R811Md8taZOJwKBjasqch9C">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/RB6MsceXZl1GuSxPUB6Oh07"/>
+        <rdfs:label>Political</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/R8LEtqNiQcLRvdiFLuAIqVy -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/R8LEtqNiQcLRvdiFLuAIqVy">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/RB6MsceXZl1GuSxPUB6Oh07"/>
+        <rdfs:label>Anthropometric</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/R9YxdqoHdXx49kT3WCmUhVi -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/R9YxdqoHdXx49kT3WCmUhVi">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/RB6MsceXZl1GuSxPUB6Oh07"/>
+        <rdfs:label>Medical</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/R9x1qpBCKDVBvmCSsgZj0Ka -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/R9x1qpBCKDVBvmCSsgZj0Ka">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/R3ki9AmjYpQPJeNd0Ynpq5"/>
+        <rdfs:label>Email</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/R9yNtVugrfx2LJOGLFEjbwM -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/R9yNtVugrfx2LJOGLFEjbwM">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/RB6MsceXZl1GuSxPUB6Oh07"/>
+        <rdfs:label>Financial</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/RB6MsceXZl1GuSxPUB6Oh07 -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/RB6MsceXZl1GuSxPUB6Oh07">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:label>Personal</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/RBL6h1hpubHrWp7J9oxoBY0 -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/RBL6h1hpubHrWp7J9oxoBY0">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/RhsiIBVg7TCEIlXSUttAkN"/>
+        <rdfs:label>City</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/RCFT9MTLU7apBDUznF82VZV -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/RCFT9MTLU7apBDUznF82VZV">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/RB6MsceXZl1GuSxPUB6Oh07"/>
+        <rdfs:label>Social media</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/RDjHNTycB2QNVRpELodaEEJ -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/RDjHNTycB2QNVRpELodaEEJ">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/RhsiIBVg7TCEIlXSUttAkN"/>
+        <rdfs:label>House Number</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/RFAk1RwTmU88O0ZFJfdfcA -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/RFAk1RwTmU88O0ZFJfdfcA">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/RB6MsceXZl1GuSxPUB6Oh07"/>
+        <rdfs:label>Religion</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/RVMWwxHsid7wMTgg3yQA2N -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/RVMWwxHsid7wMTgg3yQA2N">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/RB6MsceXZl1GuSxPUB6Oh07"/>
+        <rdfs:label>Location</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/RhsiIBVg7TCEIlXSUttAkN -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/RhsiIBVg7TCEIlXSUttAkN">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/R3ki9AmjYpQPJeNd0Ynpq5"/>
+        <rdfs:label>Address</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/RjnCBq3T5Sn3qbhEBg2ILS -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/RjnCBq3T5Sn3qbhEBg2ILS">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/RhsiIBVg7TCEIlXSUttAkN"/>
+        <rdfs:label>Zip code</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://webprotege.stanford.edu/Rrx2At4YQMmBFaB2VoQIx0 -->
+
+    <owl:Class rdf:about="http://webprotege.stanford.edu/Rrx2At4YQMmBFaB2VoQIx0">
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/R3ki9AmjYpQPJeNd0Ynpq5"/>
+        <rdfs:subClassOf rdf:resource="http://webprotege.stanford.edu/RCFT9MTLU7apBDUznF82VZV"/>
+        <rdfs:label>Twitter Id</rdfs:label>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.3.1) https://github.com/owlcs/owlapi -->
+

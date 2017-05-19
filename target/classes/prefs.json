@@ -1,0 +1,126 @@
+[
+    {
+        "informationtype": "ANY",
+        "category": "ANY",
+        "preference": "7",
+        "role": "ANY",
+        "action": "ANY",
+        "purpose": "ANY",
+        "recipient": "none"
+    }, 
+    {
+        "informationtype": "given_name",
+        "category": "Medical",
+        "preference": "7",
+        "role": "health_care_professional",
+        "action": "ACCESS",
+        "purpose": "Primary Care",
+        "recipient": "none"
+    }, 
+    {
+        "informationtype": "given_name",
+        "category": "Medical",
+        "preference": "6",
+        "role": "other",
+        "action": "Access",
+        "purpose": "Admin",
+        "recipient": "none"
+    },
+    {
+        "informationtype": "ANY",
+        "category": "Medical",
+        "preference": "8",
+        "role": "ANY",
+        "action": "Access",
+        "purpose": "ANY",
+        "recipient": "none"
+    },{
+        "informationtype": "anthropometric_data",
+        "category": "Medical",
+        "preference": "7",
+        "role": "health_care_professional",
+        "action": "Access",
+        "purpose": "Primary Care",
+        "recipient": "none"
+    }, 
+    {
+        "informationtype": "weight",
+        "category": "Medical",
+        "preference": "2",
+        "role": "health_care_professional",
+        "action": "Access",
+        "purpose": "Primary Care",
+        "recipient": "none"
+    }, 
+    {
+        "informationtype": "weight",
+        "category": "Medical",
+        "preference": "9",
+        "role": "admin",
+        "action": "Access",
+        "purpose": "Administration",
+        "recipient": "none"
+    }, 
+    {
+        "informationtype": "weight",
+        "category": "Medical",
+        "preference": "10",
+        "role": "other",
+        "action": "Access",
+        "purpose": "ANY",
+        "recipient": "none"
+    },
+    {
+        "informationtype": "weight",
+        "category": "Medical",
+        "preference": "10",
+        "role": "other",
+        "action": "Access",
+        "purpose": "ANY",
+        "recipient": "none"
+    },
+    {
+        "informationtype": "given_name",
+        "category": "Medical",
+        "preference": "9",
+        "role": "health_care_professional",
+        "action": "Disclose",
+        "purpose": "Primary Care",
+        "recipient": "other"
+    }, 
+    {
+        "informationtype": "given_name",
+        "category": "Finacial",
+        "preference": "6",
+        "role": "other",
+        "action": "Access",
+        "purpose": "Admin",
+        "recipient": "none"
+    },
+    {
+        "informationtype": "ANY",
+        "category": "Finacial",
+        "preference": "7",
+        "role": "other",
+        "action": "Access",
+        "purpose": "Other",
+        "recipient": "none"
+    },{
+        "informationtype": "anthropometric",
+        "category": "Finacial",
+        "preference": "7",
+        "role": "health_care_professional",
+        "action": "Access",
+        "purpose": "Primary Care",
+        "recipient": "none"
+    }, {
+        "informationtype": "anthropometric",
+        "category": "Finacial",
+        "preference": "2",
+        "role": "other",
+        "action": "Access",
+        "purpose": "Admin",
+        "recipient": "none"
+    }
+]
+
