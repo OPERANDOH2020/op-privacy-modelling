@@ -126,14 +126,15 @@ public class PreferenceAnalysis implements PreferenceAnalysisAPI{
          * If the weights for other actions for this data are similar. Then return
          * the median.
          */
-        List<UserPreference> preferenceList = dataNode.getPreferenceList();
-        if(preferenceList.size() >= 3) {
-            List<Integer> preferences = new ArrayList<>();
-            for(UserPreference index: preferenceList){
-                preferences.add(new Integer(index.getPreference()));
-            }
-            if(getRange(preferences) <= VARIATION) {
-                return getMean(preferences);
+        if(preferenceListFromRole != null) {
+            if(preferenceListFromRole.size()>0) {
+                List<Integer> preferences = new ArrayList<>();
+                for(UserPreference index: preferenceListFromRole){
+                    preferences.add(new Integer(index.getPreference()));
+                }
+                if(getRange(preferences) <= VARIATION) {
+                    return getMean(preferences);
+                }
             }
         }
 
