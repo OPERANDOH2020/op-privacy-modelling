@@ -86,7 +86,7 @@ public class PreferenceAnalysis implements PreferenceAnalysisAPI{
         if(score>FUNDAMENTALIST)
             return score;
 
-        Guard information  = t.listGuards().get(0);
+        Guard information  = t.getGuards();
         double risk = information.getRisk();
         return risk * score;
     }
@@ -98,7 +98,7 @@ public class PreferenceAnalysis implements PreferenceAnalysisAPI{
      * @return
      */
     public double privacyScore(Transition t, PreferenceTree prefs){
-        Guard information  = t.listGuards().get(0);
+        Guard information  = t.getGuards();
         PreferencesModel model = new PreferencesModel();
         /**
          * First - Get the data category
@@ -188,28 +188,25 @@ public class PreferenceAnalysis implements PreferenceAnalysisAPI{
 
     @Override
     public double privacyScore(String action, String role, String purpose, String data, PreferenceTree prefs) {
-        List<Guard> guards = new ArrayList<>();
         try {
-            guards.add(new Guard(role, action, data, purpose, 1.0));
+             Guard guards = new Guard(role, action, data, purpose, 1.0);
+             Transition tNew = new Transition("Temp", "Temp2", guards );
+            return privacyScore(tNew, prefs);
         } catch (InvalidGuard ex) {
             return 10;
         }
-
-        Transition tNew = new Transition("Temp", guards );
-        return privacyScore(tNew, prefs);
     }
 
     @Override
     public boolean classifyTransition(String action, String role, String purpose, String data, PreferenceTree prefs) {
-        List<Guard> guards = new ArrayList<>();
-        try {
-            guards.add(new Guard(role, action, data, purpose, 1.0));
+        try{
+            Guard guards = new Guard(role, action, data, purpose, 1.0);
+            Transition tNew = new Transition("Temp", "Temp2" , guards );
+            return classifyTransition(tNew, prefs);
         } catch (InvalidGuard ex) {
             return false;
         }
 
-        Transition tNew = new Transition("Temp", guards );
-        return classifyTransition(tNew, prefs);
     }
 
     @Override

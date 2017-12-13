@@ -1,1 +1,27 @@
-target
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+bin
+build
+.project
+/.gradle/
+.settings
+.classpath
+.project
+*.html
+/.nb-gradle/
+/old/
+/target/

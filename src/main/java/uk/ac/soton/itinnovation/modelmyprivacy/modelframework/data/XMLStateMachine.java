@@ -37,9 +37,12 @@ import java.util.logging.Logger;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.xpath.XPath;
+import uk.ac.soton.itinnovation.modelmyprivacy.lts.Field;
+import uk.ac.soton.itinnovation.modelmyprivacy.lts.InvalidRoleException;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.InvalidStateMachineException;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.InvalidStateTypeException;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.InvalidTransitionException;
+import uk.ac.soton.itinnovation.modelmyprivacy.lts.Role;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.State;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.StateMachine;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.StateNode;
@@ -90,12 +93,6 @@ public final class XMLStateMachine {
      * XML NORMAL_LABEL type content label constant.
      */
     public static final String NORMAL_LABEL = "normal";
-
-
-    /**
-     * XML TRIGGERSTART_LABEL type content label constant.
-     */
-    public static final String LOOP_LABEL = "loop";
 
     /**
      * XML TO_LABEL type content label constant.
@@ -164,10 +161,9 @@ public final class XMLStateMachine {
       * @see Guard
       * @throws InvalidTransitionException error in the transition specification.
       */
-     private static List<Guard> getGuards(final Element transition)
+     private static Guard getGuard(final Element transition)
         throws InvalidTransitionException {
 
-         final List<Guard> arrayOfGuards = new ArrayList();
          final String role = transition.getChildText("role");
          final String action = transition.getChildText("action");
          final String data = transition.getChildText("data");
@@ -175,11 +171,11 @@ public final class XMLStateMachine {
          final double risk = new Double(transition.getChildText("risk"));
         try {
             Guard gg = new Guard(role, action, data, purpose, risk);
-            arrayOfGuards.add(gg);
+            return  gg;
         } catch (InvalidGuard ex) {
             Logger.getLogger(XMLStateMachine.class.getName()).log(Level.SEVERE, null, ex);
         }
-         return arrayOfGuards;
+         return null;
      }
 
 
@@ -211,7 +207,7 @@ public final class XMLStateMachine {
              }
              try {
 
-                fromState.addTransition(new Transition(toLabel, getGuards(eltIndex)));
+                fromState.addToTransition(new Transition(toLabel, fromState.getLabel(), getGuard(eltIndex)), states);
              } catch (InvalidTransitionException ex) {
                  throw new InvalidTransitionException("Invalid transition specification", ex);
              }
@@ -254,6 +250,127 @@ public final class XMLStateMachine {
             throw new InvalidStateMachineException("Invalid transition specification", ex);
         }
         return states;
+     }
+
+     /**
+      * Extract the Roles from the XML specification.
+      *
+      * @param doc The XML document with a fully formed state machine as
+      * input. An invalid state machine input will generate an exception.
+      * @return The set of created roles from the xml spec.
+      * @throws InvalidStateMachineException Error caused by invalid behaviour specification.
+      */
+     public static List<Role> addRoles(final Element doc)
+             throws InvalidStateMachineException {
+
+        List<Role> roles = new ArrayList<>();
+        try {
+            final XPath xpaRolesRoot = XPath.newInstance("roles/role");
+            final List<Element> xmlRoles = xpaRolesRoot.selectNodes(doc);
+            for (Element roleIndex : xmlRoles) {
+                final String roleID = roleIndex.getChildText("name");
+                final String categoryLabel = roleIndex.getChildText("category");
+                final String reference = roleIndex.getChildText("reference");
+                if  (reference != null) {
+                    Role role = new Role(roleID, categoryLabel, reference);
+                    roles.add(role);
+                }
+                else {
+                    Role role = new Role(roleID, categoryLabel);
+                    roles.add(role);
+                }
+            }
+        } catch (JDOMException ex) {
+            throw new InvalidStateMachineException("Invalid XML input - check XML syntax", ex);
+        } catch (InvalidRoleException ex) {
+            throw new InvalidStateMachineException("Invalid XML input - check role specification", ex);
+        }
+        return roles;
+     }
+
+
+     private static List<Field> readFields(Element fieldXML) {
+         List<Field> fields = new ArrayList<>();
+          List<Element> catFields = fieldXML.getChildren();
+          for (Element e : catFields) {
+                fields.add(readField(e));
+          }
+         return fields;
+     }
+
+     /**
+      * Read a field from a field list and put it into a Field object
+      * @param fieldXML The XML element reference.
+      * @param recField If this is a embedded record in the field
+      * @return The created field.
+      */
+    private static Field readField(Element fieldXML) {
+        Field newField = new Field(fieldXML.getChildText("name"));
+
+        List<Element> catFields = fieldXML.getChild("categories").getChildren();
+        for (Element catIndex : catFields) {
+            newField.addCategory(catIndex.getText());
+        }
+
+        String type = fieldXML.getChildText("type");
+        if (type!= null) {
+                switch (type) {
+                    case "sensitive":
+                        newField.setSensitive(true);
+                        break;
+                    case "qi":
+                        newField.setQI(true);
+                        break;
+                    case "ei":
+                        newField.setEI(true);
+                        break;
+                }
+        }
+
+        if(fieldXML.getChild("fields") != null) {
+            List<Field> fields = readFields(fieldXML.getChild("fields"));
+            newField.setRecordField(fields);
+        }
+
+        return newField;
+     }
+
+     /**
+      * Extract the Records from the XML specification.
+      *
+      * @param doc The XML document with a fully formed state machine as
+      * input. An invalid state machine input will generate an exception.
+      * @return The set of created records from the xml spec.
+      * @throws InvalidStateMachineException Error caused by invalid behaviour specification.
+      */
+     public static List<Field> addRecords(final Element doc)
+             throws InvalidStateMachineException {
+
+        List<Field> records = new ArrayList<>();
+        try {
+            final XPath xpaRolesRoot = XPath.newInstance("records");
+            final List<Element> xmlRecords = xpaRolesRoot.selectNodes(doc);
+            /**
+             * For each record:
+             */
+            for (Element recordIndex : xmlRecords) {
+                final String recordID = recordIndex.getChildText("name");
+                List<Element> fields = recordIndex.getChild("fields").getChildren();
+                Field record = new Field(recordID);
+                List<Field> fieldElements = new ArrayList<>();
+                /**
+                 * For each field in the record:
+                 */
+                for (Element fieldIndex : fields) {
+                    fieldElements.add(readField(fieldIndex));
+                }
+                record.setRecordField(fieldElements);
+                records.add(record);
+            }
+        } catch (JDOMException ex) {
+            throw new InvalidStateMachineException("Invalid XML input - check XML syntax", ex);
+        }
+        return records;
      }
 
      /**

@@ -27,8 +27,6 @@
 package uk.ac.soton.itinnovation.modelmyprivacy.lts;
 
 import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.Guard;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -49,21 +47,26 @@ public class Transition {
     /**
      * The label/id of the transition where directed to ie. the state label.
      */
-    private transient String transitionLabel;
+    private transient String toLabel;
+
+    /**
+     * The label/id of the transition where directed from ie. the state label.
+     */
+    private transient String fromLabel;
 
     /**
      * The list of guard transitions attached to the transition.
      */
-    private transient List<Guard> conditions = new ArrayList();
-
+    private transient Guard conditions;
 
     /**
      * Create a basic transition.
      * @param label The identifier of the transition's to i.e. the label of the
      * to state.
      */
-    public Transition(final String label) {
-        this.transitionLabel = label;
+    public Transition(final String label, String from) {
+        this.toLabel = label;
+        this.fromLabel = from;
     }
 
     /**
@@ -71,9 +74,9 @@ public class Transition {
      * @param label The to label.
      * @param guards The list of guards to evaluate events against.
      */
-    public Transition(final String label, final List<Guard> guards) {
-        this(label);
-        this.conditions = guards;
+    public Transition(final String label, String to, final Guard guard) {
+        this(label, to);
+        this.conditions = guard;
     }
 
 
@@ -81,25 +84,32 @@ public class Transition {
      * Get the to label of the state transition is directed at.
      * @return The string id of the to state.
      */
-    public final String readLabel() {
-        return this.transitionLabel;
+    public final String readToLabel() {
+        return this.toLabel;
     }
 
+    /**
+     * Get the to label of the state transition is directed at.
+     * @return The string id of the to state.
+     */
+    public final String readFromLabel() {
+        return this.fromLabel;
+    }
 
     /**
      * Add a new guard to the transition.
      * @param guard The guard rule.
      * @throws InvalidGuardException Error in the guard specification.
      */
-    public final void addGuard(final Guard guard) throws InvalidGuardException {
-        this.conditions.add(guard);
+    public final void updateGuard(final Guard guard) throws InvalidGuardException {
+        this.conditions = guard;
     }
 
     /**
      * Get all the guards on the transition.
      * @return The list of guards.
      */
-    public final List<Guard> listGuards() {
+    public final Guard getGuards() {
         return this.conditions;
     }
 

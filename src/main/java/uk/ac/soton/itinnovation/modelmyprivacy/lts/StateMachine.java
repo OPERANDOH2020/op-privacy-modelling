@@ -28,24 +28,34 @@
 package uk.ac.soton.itinnovation.modelmyprivacy.lts;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.PrivacyEvent;
 import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.UnexpectedEventException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.AbstractEdge;
+import org.graphstream.graph.implementations.SingleGraph;
 import org.jdom.Document;
+import uk.ac.soton.itinnovation.modelmyprivacy.modelframework.data.AccessPolicies;
 import uk.ac.soton.itinnovation.modelmyprivacy.modelframework.data.XMLDocument;
 import uk.ac.soton.itinnovation.modelmyprivacy.modelframework.data.XMLStateMachine;
 
 
 /**
  * The java data representation of a set of states that form a state machine.
- * This executable in response to discreet events.
+ * This executable in response to discrete events.
  *
- * @author pjg
  */
 public class StateMachine implements EventCapture {
     /**
@@ -78,12 +88,54 @@ public class StateMachine implements EventCapture {
      */
     private transient Map<String, State> states;
 
+    private List<Role> stateRoles;
+
+    private List<Field> stateRecords;
+
+    private AccessPolicies policies;
 
     /**
-     * Construct a new state machine and create and interoperability report.
+     * Construct a new state machine.
      */
     public StateMachine() {
         this.eventQueue = new ArrayBlockingQueue(50);
+    }
+
+    public void addAccessPolicies(String xmlModel){
+        try {
+            policies = new AccessPolicies();
+            policies.loadAccessPolicy(xmlModel);
+        } catch (IOException ex) {
+            Logger.getLogger(StateMachine.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * Add the service roles
+      * @param xmlModel The XML statemachine description.
+     */
+    public void addRoles(String xmlModel){
+        try {
+            final Document pattern = XMLDocument.jDomReadXmlStream(
+                    new ByteArrayInputStream(xmlModel.getBytes(StandardCharsets.UTF_8)));
+            stateRoles = XMLStateMachine.addRoles(pattern.getRootElement());
+        } catch (InvalidStateMachineException ex) {
+            LTSLogger.LOG.error(ex.getLocalizedMessage());
+        }
+    }
+
+    /**
+     * Add the service roles
+      * @param xmlModel The XML statemachine description.
+     */
+    public void addRecords(String xmlModel){
+        try {
+            final Document pattern = XMLDocument.jDomReadXmlStream(
+                    new ByteArrayInputStream(xmlModel.getBytes(StandardCharsets.UTF_8)));
+            stateRecords = XMLStateMachine.addRecords(pattern.getRootElement());
+        } catch (InvalidStateMachineException ex) {
+            LTSLogger.LOG.error(ex.getLocalizedMessage());
+        }
     }
 
 
@@ -97,9 +149,122 @@ public class StateMachine implements EventCapture {
             final Document pattern = XMLDocument.jDomReadXmlStream(
                     new ByteArrayInputStream(xmlModel.getBytes(StandardCharsets.UTF_8)));
             XMLStateMachine.createStateMachine(pattern.getRootElement().getChild(XMLStateMachine.LTS_LABEL), this);
+            addRecords(xmlModel);
+            addRoles(xmlModel);
         } catch (InvalidStateMachineException ex) {
             LTSLogger.LOG.error(ex.getLocalizedMessage());
         }
+    }
+
+    /**
+     * Currently only works on depth 1 records.
+     * @param t
+     * @param states
+     */
+    private State calculateCreate(Transition t, Map<String, State> states){
+        try {
+            /**
+             * Get the data record to work with
+             */
+            String data = t.getGuards().getData();
+            List<Field> fieldRules = new ArrayList<>();
+            for(Field f: this.stateRecords) {
+                if(f.getName().equalsIgnoreCase(data)){
+                    if(f.getRecord()){
+                        for(Field f1: f.getRecordField()){
+                            fieldRules.add(f1);
+                        }
+                    }
+                    else {
+                        fieldRules.add(f);
+                    }
+                }
+            }
+
+            StateNode s = new StateNode("", StateNode.StateType.NORMAL, this);
+            s.initialiseStateVariables(stateRoles, fieldRules);
+            /**
+             * calculate the can fields for the state variables
+             */
+            for(Field f: fieldRules){
+                for(Role r: this.stateRoles){
+                    boolean can = policies.canAccess(f.getName(), r.getRoleIdentity());
+                    s.changeStateVariable(f.getName(), r.getRoleIdentity(), can);
+                }
+            }
+            return s;
+        } catch (InvalidStateMachineException ex) {
+            Logger.getLogger(StateMachine.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    private void generatePolicyTransition(State node, Map<String, State> states) {
+        /**
+         * For each can state variable - create a node and transition
+         */
+        StateNode s = new StateNode("", StateNode.StateType.NORMAL, this);
+            s.initialiseStateVariables(stateRoles, fieldRules);
+            /**
+             * calculate the can fields for the state variables
+             */
+            for(Field f: fieldRules){
+                for(Role r: this.stateRoles){
+                    boolean can = policies.canAccess(f.getName(), r.getRoleIdentity());
+                    s.changeStateVariable(f.getName(), r.getRoleIdentity(), can);
+                }
+            }
+
+    }
+
+    /**
+     *
+     * @param node
+     * @param states
+     */
+    private void preorderTraversal(State node, Map<String, State> states, State currentPos) {
+
+        Iterator iter = node.getTransitions().iterator();
+        while (iter.hasNext()) {
+            try {
+                Transition toProduce = (Transition) iter.next();
+                /**
+                 * Based on the transition generate the automated states.
+                 */
+                String action = toProduce.getGuards().getAction();
+                switch (action) {
+                    case "create":
+                        State s = calculateCreate(toProduce, states);
+                        Transition t = new Transition(s.getLabel(), currentPos.getLabel());
+                        currentPos.addToTransition(t, states);
+                        currentPos = s;
+                }
+                preorderTraversal(getState(toProduce.readToLabel()), states, currentPos);
+            } catch (InvalidTransitionException ex) {
+                Logger.getLogger(StateMachine.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    /**
+     * Create the set of states and transitions.
+     * @param dataflowStartState
+     * @param xmlModel The XML statemachine description.
+     */
+    public Map<String, State> generateStates(State dataflowStartState){
+
+        try {
+            // The first state the user has no data - it is an empty state variables
+            State startNode = new StateNode("private", State.StateType.START, this);
+            Map<String, State> states = new HashMap<>();
+            states.put("private", startNode);
+            State currentNode = dataflowStartState;
+            preorderTraversal(currentNode, states, startNode);
+            return states;
+        } catch (InvalidStateMachineException ex) {
+            Logger.getLogger(StateMachine.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
 
@@ -233,5 +398,30 @@ public class StateMachine implements EventCapture {
 	    sep = "\n";
 	}
 	return sBuilder.toString();
+    }
+
+    public final void visualiseGraph() {
+        Graph graph = new SingleGraph("Privacy Modeller");
+        String styleSheet ="edge {arrow-shape: arrow; arrow-size: 10px, 5px;}";
+        graph.addAttribute("ui.stylesheet",styleSheet);
+
+        for (Map.Entry<String, State> entry : this.states.entrySet())
+        {
+            Node n = graph.addNode(entry.getValue().getLabel());
+            n.addAttribute("ui.label", entry.getValue().getLabel());
+            System.out.println(entry.getKey() + "/" + entry.getValue());
+        }
+
+        for (Map.Entry<String, State> entry : this.states.entrySet())
+        {
+            List<Transition> transitions = entry.getValue().getTransitions();
+            for(Transition t: transitions) {
+                AbstractEdge n = graph.addEdge(entry.getValue().getLabel() + "->" + t.readToLabel(), entry.getValue().getLabel(), t.readToLabel(), true);
+                n.addAttribute("ui.label", t.listGuards().get(0).getAction());
+            }
+
+        }
+
+        graph.display();
     }
 }

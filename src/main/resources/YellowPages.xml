@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<Model  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <roles>
+        <role>
+            <name>doctor</name>
+            <category>healthcare professional</category>
+            <reference>https://www.w3.org/TR/owl-ref#person</reference>
+        </role>
+        <role>
+            <name>nurse</name>
+            <category>healthcare professional</category>
+            <reference>https://www.w3.org/TR/owl-ref</reference>
+        </role>
+        <role>
+            <name>receptionist</name>
+            <category>admin</category>
+        </role>
+        <role>
+            <name>service_register</name>
+            <category>automated</category>
+        </role>
+    </roles>
+    <records>
+        <name>patient</name>
+        <fields>
+            <field>
+                <name>name</name>
+                <categories>
+                    <category>contact</category>
+                </categories>
+                <type>ei</type>
+            </field>
+            <field>
+                <name>weight</name>
+                <categories>
+                    <category>biometric</category>
+                </categories>
+                <type>qi</type>
+            </field>
+            <field>
+                <name>diagnosis</name>
+                <categories>
+                    <category>biometric</category>
+                    <category>medical history</category>
+                </categories>
+                <type>sensitive</type>
+            </field>
+            <field>
+                <name>history</name>
+                <categories>
+                    <category>medical history</category>
+                </categories>
+                <fields>
+                    <field>
+                        <name>current medication</name>
+                        <categories>
+                            <category>medical history</category>
+                        </categories>
+                        <type>sensitive</type>
+                    </field>
+                    <field>
+                        <name>previous medication</name>
+                        <categories>
+                            <category>medical history</category>
+                        </categories>
+                        <type>sensitive</type>
+                    </field>
+                </fields>
+            </field>
+        </fields>
+    </records>
+    
+     <lts>
+        <state>
+          <label>service_registration</label>
+          <type>start</type>
+          <transition>    
+                <to>patient_record</to>
+                <action>create</action>
+                <role>service_register</role>
+                <data>patient.name</data>
+                <purpose>Service usage</purpose>
+                <risk>1.0</risk>
+           </transition>
+        </state>
+        <state>
+          <label>patient_record</label>
+          <type>normal</type>
+          <transition>    
+                <to>medical_check</to>
+                    <action>create</action>
+                    <role>nurse</role>
+                    <data>patient.weight</data>
+                    <purpose>Service registration</purpose>
+                    <risk>1.0</risk>
+           </transition>
+        </state>
+        <state>
+          <label>medical_check</label>
+          <type>normal</type>
+          <transition>    
+                <to>medical_record</to>
+                    <action>access</action>
+                    <role>doctor</role>
+                    <data>patient</data>
+                    <purpose>Medical Diagnosis</purpose>
+                    <risk>1.0</risk>
+           </transition>
+        </state>
+        <state>
+            <label>medical_record</label>
+            <type>normal</type>
+            <transition>    
+                  <to>medical_diagnosis</to>
+                      <action>create</action>
+                      <role>doctor</role>
+                      <data>patient.diagnosis</data>
+                      <risk>1.0</risk>
+            </transition>
+        </state>
+        <state>
+            <label>medical_diagnosis</label>
+            <type>normal</type>
+            <transition>    
+                  <to>finish</to>
+                      <action>create</action>
+                      <role>doctor</role>
+                      <data>patient.history</data>
+                      <risk>1.0</risk>
+            </transition>
+        </state>
+        <state>
+            <label>finish</label>
+            <type>end</type>
+        </state>
+    </lts>
+</Model>

@@ -32,15 +32,19 @@ import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.PrivacyEvent;
 import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.UnexpectedEventException;
 
 import java.util.ArrayList;
+import com.google.common.collect.Table;
+import com.google.common.collect.HashBasedTable;
 import java.util.Iterator;
 import java.util.List;
-
-
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * State in a state machine.
+ * A State in the LTS.
  *
- * @author pjg
+ * A state node is a representation of a user's privacy. It is a representation
+ * of who has seen personal information.
  */
 public class StateNode implements State {
 
@@ -60,13 +64,13 @@ public class StateNode implements State {
      * Each node has a set of one or more nodes that it points to. An end
      * node is the exception and the end node must have zero entries.
      */
-    private final transient List<Transition> nextStates;
+    private final transient List<Transition> outStates;
 
     /**
-     * After a transition has occurred, the event that this state receives
-     * will be saved for future reference.
+     * Each node has a set of incoming transitions. A start node is an exception
+     *
      */
-    private transient PrivacyEvent savedEvent;
+    private final transient List<Transition> inStates;
 
     /**
      * The state machine that this state node belongs to.
@@ -74,13 +78,15 @@ public class StateNode implements State {
     private transient StateMachine stateMachine;
 
     /**
-     * Counter. If this is a loop node
+     * The table of variables.
      */
-    private int counter = 0;
+    Table<String, String, StateVariable> table = HashBasedTable.create();
+
     /**
-     * Constant to the content label of a rest event.
+     * Trace event memory. The following field is only used for trace
+     * analysis.
      */
-    private static final String CONTENTLABEL = "content";
+    private PrivacyEvent traceToken;
 
     /**
      *
@@ -107,23 +113,33 @@ public class StateNode implements State {
         if (inputSM != null) {
             this.stateMachine = inputSM;
         }
-        this.nextStates = new ArrayList();
+
+        // Initialise the state transitions information
+        this.inStates = new ArrayList();
+        this.outStates = new ArrayList();
+
         this.stateType = type;
     }
 
-    /**
-     * Update this state's counter value.
-     * @param change The value to update the counter by e.g. increment = 1, dec
-     * = -1.
-     */
-    @Override
-    public void counter(int change){
-        this.counter = this.counter + change;
+    public void initialiseStateVariables(List<Role> roles, List<Field> fields) {
+        for(Role r: roles) {
+            String rID = r.getRoleIdentity();
+            for(Field f: fields) {
+                String fID = f.getName();
+                StateVariable sV = new StateVariable(rID, fID);
+                table.put(rID, fID, sV);
+            }
+        }
     }
 
-    @Override
-    public int getCounter() {
-        return this.counter;
+    public void changeStateVariable(String role, String field, boolean value) {
+        StateVariable get = table.get(role, field);
+        get.setCanRead(value);
+    }
+
+    public void changeSeenStateVariable(String role, String field, boolean value) {
+        StateVariable get = table.get(role, field);
+        get.setSeen(value);
     }
 
     /**
@@ -154,22 +170,29 @@ public class StateNode implements State {
 	return stateType.equals(StateType.START);
     }
 
-
-
-
      /**
-     * Adds a transition between two states in the state machine. If
- both states do not exist then an InvalidTransitionException is thrown.
+     * Adds a transition between two states in the state machine. If both states
+     * do not exist then an InvalidTransitionException is thrown.
      * @param trans the transition of guards that must evaluate to true
      * if the transition is to be taken.
      * @throws InvalidTransitionException Adding invalid transition.
      */
     @Override
-    public final void addTransition(final Transition trans)
+    public final void addToTransition(final Transition trans, Map<String,
+             State> states)
             throws InvalidTransitionException {
-	this.nextStates.add(trans);
+	this.outStates.add(trans);
+
+        // Find the from state label and call to add from states.
+        State fromState = states.get(trans.readFromLabel());
+        fromState.addFromTransition(trans);
     }
 
+    @Override
+    public final void addFromTransition(final Transition trans)
+            throws InvalidTransitionException {
+	this.inStates.add(trans);
+    }
 
     /**
      * List the set of transitions possible from this state.
@@ -177,7 +200,7 @@ public class StateNode implements State {
      */
     @Override
     public final List<Transition> getTransitions() {
-        return this.nextStates;
+        return this.outStates;
     };
 
 
@@ -197,29 +220,26 @@ public class StateNode implements State {
             throws UnexpectedEventException {
         // Find transitions with matching resource locations
 
-        this.savedEvent = input;
+        this.traceToken = input;
 
         /**
          * Iterate through each potential event transition to find a matching
          * next state. If no matches then we have an interoperability fail.
          * Report in the exception.
          */
-        final Iterator<Transition> transIt = this.nextStates.iterator();
+        final Iterator<Transition> transIt = this.outStates.iterator();
         while (transIt.hasNext()) {
-            final Transition evTrans = transIt.next();
-            if (!evTrans.listGuards().isEmpty()) {
-                try {
-                    for(Guard g: evTrans.listGuards()){
-                        // Match action
-                        if(g.evaluate(input.getActionField(), input.getRoleField(), input.getDataField())){
-                            return evTrans.readLabel();
-                        }
-                    }
-                } catch (InvalidInputException ex) {
-                    ex.printStackTrace();
+            try {
+                final Transition evTrans = transIt.next();
+                Guard g = evTrans.getGuards();
+                // Match action
+                if(g.evaluate(input.getActionField(), input.getRoleField(), input.getDataField())){
+                    return evTrans.readToLabel();
                 }
-
+            } catch (InvalidRoleException ex) {
+                Logger.getLogger(StateNode.class.getName()).log(Level.SEVERE, null, ex);
             }
+
         }
         throw new UnexpectedEventException("Fail: no transition possible");
     };
@@ -243,7 +263,7 @@ public class StateNode implements State {
 
     @Override
     public final PrivacyEvent getStoredEvent() {
-        return this.savedEvent;
+        return this.traceToken;
     }
 
 }

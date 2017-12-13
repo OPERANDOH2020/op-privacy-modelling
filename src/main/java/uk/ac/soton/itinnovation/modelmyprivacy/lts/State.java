@@ -27,6 +27,7 @@
 package uk.ac.soton.itinnovation.modelmyprivacy.lts;
 
 import java.util.List;
+import java.util.Map;
 import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.PrivacyEvent;
 import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.UnexpectedEventException;
 
@@ -65,18 +66,6 @@ public interface State {
     boolean isEndNode();
 
     /**
-     * Update the counter state value.
-     * @param change The value to change e.g. 1 to add, -1 to subtract
-     */
-    void counter(int change);
-
-    /**
-     * Get the counter state value.
-     * @return The counter value
-     */
-    int getCounter();
-
-    /**
      * Return true if this is a start node state; otherwise return false.
      * @return boolean value indicating start node status.
      */
@@ -103,7 +92,18 @@ public interface State {
      * in the xml <guards> tag.
      * @throws InvalidTransitionException Error in the transition specification input.
      */
-     void addTransition(Transition newTransition)
+     void addToTransition(Transition newTransition, Map<String,
+             State> states)
+            throws InvalidTransitionException;
+
+     /**
+     * Adds a guard transition between two states in the state machine. If both
+     * states do not exist then an InvalidTransitionException is thrown.
+     * @param newTransition The transition data to add. This is a list of guards
+     * in the xml <guards> tag.
+     * @throws InvalidTransitionException Error in the transition specification input.
+     */
+     void addFromTransition(Transition newTransition)
             throws InvalidTransitionException;
 
     /**

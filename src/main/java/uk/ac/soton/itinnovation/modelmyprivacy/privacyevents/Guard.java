@@ -26,7 +26,7 @@
 
 package uk.ac.soton.itinnovation.modelmyprivacy.privacyevents;
 
-import uk.ac.soton.itinnovation.modelmyprivacy.lts.InvalidInputException;
+import uk.ac.soton.itinnovation.modelmyprivacy.lts.InvalidRoleException;
 
 /**
  * A guard is a rule applied to an event that evaluates to true or false.
@@ -121,9 +121,9 @@ public class Guard {
      * Evaluate this guard against the provided input.
      * @param input The input to test the guard against.
      * @return The result of the evaluated guard against the input.
-     * @throws InvalidInputException Error in input and exception thrown during compare.
+     * @throws InvalidRoleException Error in input and exception thrown during compare.
      */
-    public final boolean evaluate(final String action, String role, String data) throws InvalidInputException {
+    public final boolean evaluate(final String action, String role, String data) throws InvalidRoleException {
         if(!action.equalsIgnoreCase(this.action))
             return false;
         if(!role.equalsIgnoreCase(this.role))
