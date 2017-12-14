@@ -29,7 +29,10 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jdom.Document;
+import uk.ac.soton.itinnovation.PrivacyModel.GeneratedModel;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.Field;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.FileUtils;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.Role;
@@ -42,9 +45,9 @@ import uk.ac.soton.itinnovation.modelmyprivacy.lts.StateMachine;
  * Test class to test the creation of a data flow model from the XML specification.
  */
 
-public class RolesDataTest {
+public class testOne {
 
-    private final static String FILENAME = "YellowPages.xml";
+    private final static String FILENAME = "unittests/testOne.xml";
     /**
      * @param args the command line arguments
      */
@@ -88,7 +91,17 @@ public class RolesDataTest {
          */
         StateMachine stateMachine = new StateMachine();
         stateMachine.buildDataFlowLTS(sMachine);
-        stateMachine.visualiseDataFlowGraph();
-
+//        stateMachine.visualiseDataFlowGraph();
+        /**
+         * Add the access policies
+         */
+        stateMachine.addAccessPolicies("unittests/testOne.json");
+        GeneratedModel gModel = new GeneratedModel();
+        try {
+            gModel.generateStates(stateMachine);
+            stateMachine.visualiseAutomatedGraph();
+        } catch (InvalidStateMachineException ex) {
+            Logger.getLogger(testOne.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

@@ -201,4 +201,67 @@ public class Field {
     public List<String> getCategory() {
         return this.categories;
     }
+
+    /**
+     * Override the toString method for displaying role information.
+     * @return The string description of the role.
+     */
+    @Override
+    public String toString() {
+        return toJsonString("");
+    }
+
+    /**
+     * Generate a json version of the data.
+     * @param tab
+     * @return
+     */
+    public String toJsonString(String tab) {
+        StringBuilder roleString = new StringBuilder();
+        roleString.append("\n").append(tab).append("{");
+        roleString.append("\n ").append(tab).append("\t\"fieldname\": \"").append(this.name).append("\",");
+        if(this.categories.size() > 0) {
+            roleString.append("\n ").append(tab).append("\t\"categories\": [");
+        }
+        for(int i=0; i < this.categories.size(); i++) {
+            roleString.append("\n").append(tab).append("\t{");
+            roleString.append("\n ").append(tab).append("\t\t\"category\": \"").append(this.categories.get(i)).append("\"");
+            roleString.append("\n" + tab + "\t}");
+            if (i!=this.categories.size()-1){
+                roleString.append(",");
+            }
+        }
+        if(this.categories.size() > 0) {
+            roleString.append("\n " + tab + "\t],");
+        }
+        if(this.record) {
+            roleString.append("\n "+ tab +"\t\"fields\": [");
+            for(int i=0; i < this.recordReference.size(); i++) {
+                String tabField = tab + "\t";
+                roleString.append(this.recordReference.get(i).toJsonString(tabField));
+                if (i!=this.recordReference.size()-1){
+                    roleString.append(",");
+                }
+            }
+            roleString.append("\n" + tab +"\t],");
+        }
+
+        roleString.append("\n " + tab + "\t\"senstive\": \"").append(this.sensitive).append("\",");
+        roleString.append("\n " + tab + "\t\"explicit identifier\": \"").append(this.explicitIdentifier).append("\",");
+        roleString.append("\n " + tab + "\t\"quasi identifier\": \"").append(this.quasiIdentifier).append("\"");
+        roleString.append("\n" + tab + "}");
+        return roleString.toString();
+    }
+
+
+    /**
+     * Display helper method to output fields information for the list of fields
+     * passed as a parameter.
+     * @param data The list of fields to display
+     */
+    public static void printData(List<Field> data) {
+        for(Field f: data) {
+            System.out.println(f.toString());
+        }
+    }
 }

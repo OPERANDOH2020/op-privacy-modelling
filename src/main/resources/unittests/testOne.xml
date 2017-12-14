@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<Model  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <roles>
+        <role>
+            <name>doctor</name>
+            <category>healthcare professional</category>
+            <reference>https://www.w3.org/TR/owl-ref#person</reference>
+        </role>
+        <role>
+            <name>nurse</name>
+            <category>healthcare professional</category>
+            <reference>https://www.w3.org/TR/owl-ref</reference>
+        </role>
+    </roles>
+    <records>
+        <name>patient</name>
+        <fields>
+            <field>
+                <name>name</name>
+                <categories>
+                    <category>contact</category>
+                </categories>
+                <type>ei</type>
+            </field>
+        </fields>
+    </records>
+    
+     <lts>
+        <state>
+          <label>service_registration</label>
+          <type>start</type>
+          <transition>    
+                <to>finish</to>
+                <action>create</action>
+                <role>service_register</role>
+                <data>patient</data>
+                <purpose>Service usage</purpose>
+           </transition>
+        </state>
+        
+        <state>
+            <label>finish</label>
+            <type>end</type>
+        </state>
+    </lts>
+</Model>

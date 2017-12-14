@@ -26,7 +26,7 @@
 
 package uk.ac.soton.itinnovation.modelmyprivacy.privacyevents;
 
-import uk.ac.soton.itinnovation.modelmyprivacy.modelframework.data.XML;
+import uk.ac.soton.itinnovation.modelmyprivacy.dataflowmodel.XML;
 import java.io.Serializable;
 
 /**

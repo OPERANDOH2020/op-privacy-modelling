@@ -27,6 +27,7 @@
 import java.io.IOException;
 import java.nio.charset.Charset;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.FileUtils;
+import uk.ac.soton.itinnovation.modelmyprivacy.lts.InvalidStateMachineException;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.StateMachine;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.TraceGenerator;
 
@@ -45,18 +46,19 @@ public class PatternExecutionTest {
         try {
             final String sMachine = FileUtils.readFile("HelloWorld.xml", Charset.defaultCharset());
 
-                 StateMachine stateMachine = new StateMachine();
-                 stateMachine.buildStates(sMachine);
+             StateMachine stateMachine = new StateMachine();
+             stateMachine.buildDataFlowLTS(sMachine);
 
             /*
              * Start the model monitoring
              */
             TraceGenerator tG = new TraceGenerator();
             tG.generateEvents("ServiceTrace.json", stateMachine);
-            final String Report = stateMachine.start();
-            System.out.println(Report);
+            stateMachine.start();
 
         } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (InvalidStateMachineException ex) {
             ex.printStackTrace();
         }
      }

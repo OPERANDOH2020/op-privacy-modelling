@@ -30,27 +30,15 @@ import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.PrivacyEvent;
 
 
 /**
- * Interface between the Interoperability cradle (that monitors the applications
- * and services. Passes events and exceptions to the pattern exection engine
- * that tests interoperability.
+ * Interface to input events into a state machine (so that it can
+ * execute based on those discrete events).
  *
- * @author pjg
  */
 public interface EventCapture {
     /**
-     * When a new http message is observed (e.g. a request or reply) at any
-     * REST interface in the cradle this notifies this method.
-     * @param httpMessage The new RESTEvent generated.
-     * @see Interop.PatternEngine.RESTEvent
+     * When a new privacy event is observed, call this method.
+     * @param privEvent The complete privacy event.
      */
-    void pushEvent(PrivacyEvent httpMessage);
+    void pushEvent(PrivacyEvent privEvent);
 
-    /**
-     * Exceptions relevant to interoperation need to be passed from the cradle
-     * to the pattern engine. These include connection exceptions or problems
-     * with message formats (e.g. poorly constructed http headers.
-     * @param excep The exception generated. This is of the general type and it
-     * is up to the listener to determine the exception type.
-     */
-    void logException(Exception excep);
 }

@@ -24,7 +24,7 @@
 //
 /////////////////////////////////////////////////////////////////////////
 
-package uk.ac.soton.itinnovation.modelmyprivacy.modelframework.data;
+package uk.ac.soton.itinnovation.modelmyprivacy.dataflowmodel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -168,9 +168,8 @@ public final class XMLStateMachine {
          final String action = transition.getChildText("action");
          final String data = transition.getChildText("data");
          final String purpose = transition.getChildText("purpose");
-         final double risk = new Double(transition.getChildText("risk"));
         try {
-            Guard gg = new Guard(role, action, data, purpose, risk);
+            Guard gg = new Guard(role, action, data, purpose);
             return  gg;
         } catch (InvalidGuard ex) {
             Logger.getLogger(XMLStateMachine.class.getName()).log(Level.SEVERE, null, ex);

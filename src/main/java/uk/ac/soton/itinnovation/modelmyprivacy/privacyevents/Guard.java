@@ -97,29 +97,25 @@ public class Guard {
         return risk;
     }
 
-    /**
-     * Construct the guard. Note, all elements are translated to lowercase for
-     * case independent matching. This is because, there may be little
-     * standardisation of http fields.
-     *
-     * @param label The guard label.
-     * @param type The guard type.
-     * @param condition The condition e.g. =
-     * @param comparitor What to compare a value against.
-     * @param arc Overall architecture context.
-     * @throws InvalidGuard Exception indicating guard could not be produced from the inputs
-     */
-    public Guard(final String roleInput, final String actionInput, String dataInput, String purposeInput, double risk) throws InvalidGuard {
-        this.role = roleInput;
-        this.action = actionInput;
-        this.data = dataInput;
-        this.purpose = purposeInput;
+    public final void setRisk(double risk) {
         this.risk = risk;
     }
 
     /**
+     * Construct the guard. Note, all elements are translated to lowercase for
+     * case independent matching. This is because, there may be little
+     * standardisation of http fields.
+     * @throws InvalidGuard Exception indicating guard could not be produced from the inputs
+     */
+    public Guard(final String roleInput, final String actionInput, String dataInput, String purposeInput) throws InvalidGuard {
+        this.role = roleInput;
+        this.action = actionInput;
+        this.data = dataInput;
+        this.purpose = purposeInput;
+    }
+
+    /**
      * Evaluate this guard against the provided input.
-     * @param input The input to test the guard against.
      * @return The result of the evaluated guard against the input.
      * @throws InvalidRoleException Error in input and exception thrown during compare.
      */

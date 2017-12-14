@@ -44,8 +44,6 @@ import com.google.common.io.Closeables;
  *
  * The file is a trace of json events, that is an array of objects is
  * parsed to generate privacy events that are then sent to the
- *
- * @author pjg
  */
 public final class TraceGenerator {
     /**
@@ -56,7 +54,7 @@ public final class TraceGenerator {
     }
 
     /**
-     * Generate a set of REST events that have been saved to a file.
+     * Generate a set of privacy events that have been saved to a file.
      *
      * @param jsonDataFile The file with json events stored as a trace
      * @param sMachine The state machine pattern that the events will be tested

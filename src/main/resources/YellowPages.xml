@@ -80,7 +80,6 @@
                 <role>service_register</role>
                 <data>patient.name</data>
                 <purpose>Service usage</purpose>
-                <risk>1.0</risk>
            </transition>
         </state>
         <state>
@@ -88,11 +87,10 @@
           <type>normal</type>
           <transition>    
                 <to>medical_check</to>
-                    <action>create</action>
-                    <role>nurse</role>
-                    <data>patient.weight</data>
-                    <purpose>Service registration</purpose>
-                    <risk>1.0</risk>
+                <action>create</action>
+                <role>nurse</role>
+                <data>patient.weight</data>
+                <purpose>Service registration</purpose>
            </transition>
         </state>
         <state>
@@ -100,11 +98,17 @@
           <type>normal</type>
           <transition>    
                 <to>medical_record</to>
-                    <action>access</action>
-                    <role>doctor</role>
-                    <data>patient</data>
-                    <purpose>Medical Diagnosis</purpose>
-                    <risk>1.0</risk>
+                <action>access</action>
+                <role>doctor</role>
+                <data>patient</data>
+                <purpose>Medical Diagnosis</purpose>
+           </transition>
+           <transition>    
+                <to>nurse_diagnosis</to>
+                <action>access</action>
+                <role>receptionist</role>
+                <data>patient</data>
+                <purpose>Service admin</purpose>
            </transition>
         </state>
         <state>
@@ -112,10 +116,9 @@
             <type>normal</type>
             <transition>    
                   <to>medical_diagnosis</to>
-                      <action>create</action>
-                      <role>doctor</role>
-                      <data>patient.diagnosis</data>
-                      <risk>1.0</risk>
+                  <action>create</action>
+                  <role>doctor</role>
+                  <data>patient.diagnosis</data>
             </transition>
         </state>
         <state>
@@ -123,14 +126,27 @@
             <type>normal</type>
             <transition>    
                   <to>finish</to>
-                      <action>create</action>
-                      <role>doctor</role>
-                      <data>patient.history</data>
-                      <risk>1.0</risk>
+                  <action>create</action>
+                  <role>doctor</role>
+                  <data>patient.history</data>
             </transition>
         </state>
         <state>
             <label>finish</label>
+            <type>end</type>
+        </state>
+        <state>
+            <label>nurse_diagnosis</label>
+            <type>normal</type>
+            <transition>    
+                  <to>admin_end</to>
+                  <action>access</action>
+                  <role>nurse</role>
+                  <data>patient.history</data>
+            </transition>
+        </state>
+        <state>
+            <label>admin_end</label>
             <type>end</type>
         </state>
     </lts>

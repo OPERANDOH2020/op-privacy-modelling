@@ -81,6 +81,23 @@ public class AccessPolicies {
 
     /**
      * Get the fields that a role can access
+     * @param fieldName The role to get access policies for on this record
+     * @return The list of fields that can be accessed.
+     */
+    public List<String> canAccessField(String fieldName) {
+        List<String> accessTrue = new ArrayList<>();
+        JSONArray access_policies = JsonPath.read(accessPolicy, "$.policies[?(@.resource=='"+ fieldName +"')]");
+        for(Object aP: access_policies) {
+            boolean permission = JsonPath.read(aP, "$.permission");
+            if(permission) {
+                accessTrue.add((String) JsonPath.read(aP, "$.subject"));
+            }
+        }
+        return accessTrue;
+    }
+
+    /**
+     * Get the fields that a role can access
      * @param roleName The role to get access policies for on this record
      * @return The list of fields that can be accessed.
      */

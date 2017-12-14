@@ -189,7 +189,7 @@ public class PreferenceAnalysis implements PreferenceAnalysisAPI{
     @Override
     public double privacyScore(String action, String role, String purpose, String data, PreferenceTree prefs) {
         try {
-             Guard guards = new Guard(role, action, data, purpose, 1.0);
+             Guard guards = new Guard(role, action, data, purpose);
              Transition tNew = new Transition("Temp", "Temp2", guards );
             return privacyScore(tNew, prefs);
         } catch (InvalidGuard ex) {
@@ -200,7 +200,7 @@ public class PreferenceAnalysis implements PreferenceAnalysisAPI{
     @Override
     public boolean classifyTransition(String action, String role, String purpose, String data, PreferenceTree prefs) {
         try{
-            Guard guards = new Guard(role, action, data, purpose, 1.0);
+            Guard guards = new Guard(role, action, data, purpose);
             Transition tNew = new Transition("Temp", "Temp2" , guards );
             return classifyTransition(tNew, prefs);
         } catch (InvalidGuard ex) {

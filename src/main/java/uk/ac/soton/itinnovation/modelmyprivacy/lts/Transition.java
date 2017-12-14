@@ -74,8 +74,8 @@ public class Transition {
      * @param label The to label.
      * @param guards The list of guards to evaluate events against.
      */
-    public Transition(final String label, String to, final Guard guard) {
-        this(label, to);
+    public Transition(final String label, String from, final Guard guard) {
+        this(label, from);
         this.conditions = guard;
     }
 

@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import uk.ac.soton.itinnovation.modelmyprivacy.utils.TableGenerator;
 
 /**
  * A State in the LTS.
@@ -132,6 +133,23 @@ public class StateNode implements State {
         }
     }
 
+    public void overwriteStateVariables(List<Role> roles, List<Field> fields, Table<String, String, StateVariable> filledTable ){
+        for(Role r: roles) {
+            String rID = r.getRoleIdentity();
+            for(Field f: fields) {
+                String fID = f.getName();
+                StateVariable newVal = new StateVariable(rID, fID);
+                newVal.setCanRead(filledTable.get(rID, fID).getCanRead());
+                newVal.setSeen(filledTable.get(rID, fID).getSeen());
+                table.put(rID, fID, newVal);
+            }
+        }
+    }
+
+    public Table<String, String, StateVariable> getStateVariables() {
+        return this.table;
+    }
+
     public void changeStateVariable(String role, String field, boolean value) {
         StateVariable get = table.get(role, field);
         get.setCanRead(value);
@@ -140,6 +158,15 @@ public class StateNode implements State {
     public void changeSeenStateVariable(String role, String field, boolean value) {
         StateVariable get = table.get(role, field);
         get.setSeen(value);
+    }
+
+    /**
+     * Read the state label. Within a state machine, labels are
+     * unique i.e. no two states can have the same label.
+     * @return A string with the state label.
+     */
+    public final StateMachine getStateMachine() {
+	return this.stateMachine;
     }
 
     /**
@@ -264,6 +291,32 @@ public class StateNode implements State {
     @Override
     public final PrivacyEvent getStoredEvent() {
         return this.traceToken;
+    }
+
+    public String getAutoLabel() {
+        return this.table.toString();
+    }
+
+    public String tableToString() {
+        TableGenerator tGN = new TableGenerator();
+        List<String> columnKeySet = new ArrayList<String>();
+        columnKeySet.add("Role");
+        // Get the field names
+        for(String roleName: this.table.rowKeySet()){
+            columnKeySet.add(roleName);
+        }
+        List<List<String>> tableLists = new ArrayList<List<String>>();
+        // for each role create a list of strings = the row
+        for(String fieldName: this.table.columnKeySet()){
+            List<String> rowValues = new ArrayList<>();
+            rowValues.add(fieldName);
+            for(String roleName: this.table.rowKeySet()){
+                rowValues.add(this.table.get(roleName, fieldName).toString());
+            }
+            tableLists.add(rowValues);
+        }
+
+        return tGN.generateTable(columnKeySet, tableLists, 1);
     }
 
 }

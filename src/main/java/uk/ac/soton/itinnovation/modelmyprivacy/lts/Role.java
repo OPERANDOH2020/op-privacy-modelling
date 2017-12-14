@@ -27,6 +27,7 @@ package uk.ac.soton.itinnovation.modelmyprivacy.lts;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 /**
  * A role is the specification of a type of person performing actions
@@ -106,4 +107,33 @@ public class Role {
         return this.roleCategory;
     }
 
+    /**
+     * Override the toString method for displaying role information.
+     * @return The string description of the role.
+     */
+    @Override
+    public String toString() {
+        StringBuilder roleString = new StringBuilder();
+        roleString.append("{ \n \t \"roleid\": \"").append(this.roleIdentity).append("\",");
+        roleString.append("\n \t \"rolecategory\": \"").append(this.roleCategory).append("\"");
+        roleString.append("\n }");
+        return roleString.toString();
+    }
+
+    /**
+     * Display helper method to output role information for the list of roles
+     * passed as a parameter.
+     * @param roles The list of roles to display
+     */
+    public static void printRoles(List<Role> roles) {
+        System.out.println("[");
+        for(int i=0; i< roles.size(); i++) {
+            System.out.print(roles.get(i).toString());
+
+            if(i!=roles.size()-1){
+                System.out.print(",\n");
+            }
+        }
+        System.out.println("]");
+    }
 }

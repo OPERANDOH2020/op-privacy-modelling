@@ -108,4 +108,20 @@ public class StateVariable {
     public boolean getCanUpdate() {
         return this.canRead;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sV = new StringBuilder();
+        String can = "f";
+        if(this.getCanRead()) {
+            can = "t";
+        }
+        String seen = "f";
+        sV.append(" ").append(can).append(" |");
+        if(this.getSeen()) {
+            seen = "t";
+        }
+        sV.append(" ").append(seen).append(" ");
+        return sV.toString();
+    }
 }
