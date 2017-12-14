@@ -34,9 +34,7 @@ import uk.ac.soton.itinnovation.modelmyprivacy.lts.InvalidRoleException;
  *
  * @author pjg@it-innovation.soton.ac.uk
  */
-public class Guard {
-
-
+public class TransitionLabel {
 
     /**
      * The type of the guard. That is the function.
@@ -107,7 +105,7 @@ public class Guard {
      * standardisation of http fields.
      * @throws InvalidGuard Exception indicating guard could not be produced from the inputs
      */
-    public Guard(final String roleInput, final String actionInput, String dataInput, String purposeInput) throws InvalidGuard {
+    public TransitionLabel(final String roleInput, final String actionInput, String dataInput, String purposeInput) throws InvalidTransitionLabel {
         this.role = roleInput;
         this.action = actionInput;
         this.data = dataInput;

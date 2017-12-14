@@ -26,8 +26,6 @@
 
 package uk.ac.soton.itinnovation.modelmyprivacy.lts;
 
-
-import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.Guard;
 import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.PrivacyEvent;
 import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.UnexpectedEventException;
 
@@ -39,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.TransitionLabel;
 import uk.ac.soton.itinnovation.modelmyprivacy.utils.TableGenerator;
 
 /**
@@ -258,7 +257,7 @@ public class StateNode implements State {
         while (transIt.hasNext()) {
             try {
                 final Transition evTrans = transIt.next();
-                Guard g = evTrans.getGuards();
+                TransitionLabel g = evTrans.getLabel();
                 // Match action
                 if(g.evaluate(input.getActionField(), input.getRoleField(), input.getDataField())){
                     return evTrans.readToLabel();
@@ -279,9 +278,9 @@ public class StateNode implements State {
      * @param report The output stream to output the data.
      * @return True if all guards evaluate against the conditions.
      */
-    private boolean evaluateGuards(final List<Guard> checks) {
+    private boolean evaluateLabel(final List<TransitionLabel> checks) {
 
-        final Iterator<Guard> itCheck = checks.iterator();
+        final Iterator<TransitionLabel> itCheck = checks.iterator();
         while (itCheck.hasNext()) {
 
         }

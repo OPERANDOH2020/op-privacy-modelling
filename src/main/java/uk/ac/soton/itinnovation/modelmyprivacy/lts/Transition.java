@@ -26,7 +26,8 @@
 
 package uk.ac.soton.itinnovation.modelmyprivacy.lts;
 
-import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.Guard;
+import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.InvalidTransitionLabel;
+import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.TransitionLabel;
 
 
 /**
@@ -57,7 +58,7 @@ public class Transition {
     /**
      * The list of guard transitions attached to the transition.
      */
-    private transient Guard conditions;
+    private transient TransitionLabel conditions;
 
     /**
      * Create a basic transition.
@@ -74,7 +75,7 @@ public class Transition {
      * @param label The to label.
      * @param guards The list of guards to evaluate events against.
      */
-    public Transition(final String label, String from, final Guard guard) {
+    public Transition(final String label, String from, final TransitionLabel guard) {
         this(label, from);
         this.conditions = guard;
     }
@@ -101,7 +102,7 @@ public class Transition {
      * @param guard The guard rule.
      * @throws InvalidGuardException Error in the guard specification.
      */
-    public final void updateGuard(final Guard guard) throws InvalidGuardException {
+    public final void updateTransitionLabel(final TransitionLabel guard) throws InvalidTransitionLabel {
         this.conditions = guard;
     }
 
@@ -109,7 +110,7 @@ public class Transition {
      * Get all the guards on the transition.
      * @return The list of guards.
      */
-    public final Guard getGuards() {
+    public final TransitionLabel getLabel() {
         return this.conditions;
     }
 

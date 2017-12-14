@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.Transition;
-import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.Guard;
-import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.InvalidGuard;
+import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.InvalidTransitionLabel;
+import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.TransitionLabel;
 import uk.ac.soton.itinnovation.modelmyprivacy.privacymodel.GraphPreference;
 import uk.ac.soton.itinnovation.modelmyprivacy.privacymodel.InvalidJSONException;
 import uk.ac.soton.itinnovation.modelmyprivacy.privacymodel.PreferenceTree;
@@ -86,7 +86,7 @@ public class PreferenceAnalysis implements PreferenceAnalysisAPI{
         if(score>FUNDAMENTALIST)
             return score;
 
-        Guard information  = t.getGuards();
+        TransitionLabel information  = t.getLabel();
         double risk = information.getRisk();
         return risk * score;
     }
@@ -98,7 +98,7 @@ public class PreferenceAnalysis implements PreferenceAnalysisAPI{
      * @return
      */
     public double privacyScore(Transition t, PreferenceTree prefs){
-        Guard information  = t.getGuards();
+        TransitionLabel information  = t.getLabel();
         PreferencesModel model = new PreferencesModel();
         /**
          * First - Get the data category
@@ -189,10 +189,10 @@ public class PreferenceAnalysis implements PreferenceAnalysisAPI{
     @Override
     public double privacyScore(String action, String role, String purpose, String data, PreferenceTree prefs) {
         try {
-             Guard guards = new Guard(role, action, data, purpose);
+             TransitionLabel guards = new TransitionLabel(role, action, data, purpose);
              Transition tNew = new Transition("Temp", "Temp2", guards );
             return privacyScore(tNew, prefs);
-        } catch (InvalidGuard ex) {
+        } catch (InvalidTransitionLabel ex) {
             return 10;
         }
     }
@@ -200,10 +200,10 @@ public class PreferenceAnalysis implements PreferenceAnalysisAPI{
     @Override
     public boolean classifyTransition(String action, String role, String purpose, String data, PreferenceTree prefs) {
         try{
-            Guard guards = new Guard(role, action, data, purpose);
+            TransitionLabel guards = new TransitionLabel(role, action, data, purpose);
             Transition tNew = new Transition("Temp", "Temp2" , guards );
             return classifyTransition(tNew, prefs);
-        } catch (InvalidGuard ex) {
+        } catch (InvalidTransitionLabel ex) {
             return false;
         }
 

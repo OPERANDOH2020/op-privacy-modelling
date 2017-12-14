@@ -47,8 +47,8 @@ import uk.ac.soton.itinnovation.modelmyprivacy.lts.State;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.StateMachine;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.StateNode;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.Transition;
-import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.Guard;
-import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.InvalidGuard;
+import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.InvalidTransitionLabel;
+import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.TransitionLabel;
 
 
 /**
@@ -161,7 +161,7 @@ public final class XMLStateMachine {
       * @see Guard
       * @throws InvalidTransitionException error in the transition specification.
       */
-     private static Guard getGuard(final Element transition)
+     private static TransitionLabel getLabel(final Element transition)
         throws InvalidTransitionException {
 
          final String role = transition.getChildText("role");
@@ -169,9 +169,9 @@ public final class XMLStateMachine {
          final String data = transition.getChildText("data");
          final String purpose = transition.getChildText("purpose");
         try {
-            Guard gg = new Guard(role, action, data, purpose);
+            TransitionLabel gg = new TransitionLabel(role, action, data, purpose);
             return  gg;
-        } catch (InvalidGuard ex) {
+        } catch (InvalidTransitionLabel ex) {
             Logger.getLogger(XMLStateMachine.class.getName()).log(Level.SEVERE, null, ex);
         }
          return null;
@@ -206,7 +206,7 @@ public final class XMLStateMachine {
              }
              try {
 
-                fromState.addToTransition(new Transition(toLabel, fromState.getLabel(), getGuard(eltIndex)), states);
+                fromState.addToTransition(new Transition(toLabel, fromState.getLabel(), getLabel(eltIndex)), states);
              } catch (InvalidTransitionException ex) {
                  throw new InvalidTransitionException("Invalid transition specification", ex);
              }

@@ -336,7 +336,7 @@ public class StateMachine implements EventCapture {
             List<Transition> transitions = entry.getValue().getTransitions();
             for(Transition t: transitions) {
                 AbstractEdge n = graph.addEdge(entry.getValue().getLabel() + "->" + t.readToLabel(), entry.getValue().getLabel(), t.readToLabel(), true);
-                n.addAttribute("ui.label", t.getGuards().getAction());
+                n.addAttribute("ui.label", t.getLabel().getAction());
             }
 
         }
@@ -367,7 +367,7 @@ public class StateMachine implements EventCapture {
             List<Transition> transitions = entry.getValue().getTransitions();
             for(Transition t: transitions) {
                 AbstractEdge n = graph.addEdge(entry.getValue().getLabel() + "->" + t.readToLabel(), entry.getValue().getLabel(), t.readToLabel(), true);
-                n.addAttribute("ui.label", "|" + t.getGuards().getRole()+ "|" + t.getGuards().getAction() +"|" + t.getGuards().getData()+" for " + t.getGuards().getPurpose()+"|");
+                n.addAttribute("ui.label", "|" + t.getLabel().getRole()+ "|" + t.getLabel().getAction() +"|" + t.getLabel().getData()+" for " + t.getLabel().getPurpose()+"|");
             }
 
         }

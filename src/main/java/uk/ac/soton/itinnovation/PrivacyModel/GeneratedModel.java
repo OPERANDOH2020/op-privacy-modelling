@@ -41,8 +41,8 @@ import uk.ac.soton.itinnovation.modelmyprivacy.lts.StateMachine;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.StateNode;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.StateVariable;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.Transition;
-import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.Guard;
-import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.InvalidGuard;
+import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.InvalidTransitionLabel;
+import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.TransitionLabel;
 /**
  * The set of methods for generating the privacy model based
  * upon two inputs:
@@ -117,7 +117,7 @@ public class GeneratedModel {
          * Currently assume it is a single field. To do - change to record with
          * n fields.
          */
-        String fieldName = dataFlowTransition.getGuards().getData();
+        String fieldName = dataFlowTransition.getLabel().getData();
 
         // Get the permissions for the field.
         List<String> canAccess = sm.getAccessPolicies().canAccessField(fieldName);
@@ -147,7 +147,7 @@ public class GeneratedModel {
             /**
              * Based on the transition generate the automated states.
              */
-            String action = toProduce.getGuards().getAction();
+            String action = toProduce.getLabel().getAction();
             switch (action) {
                 case "create":
                     State createdNode = generateStateFromCreateAction(toProduce, (StateNode) node, dataFlowModel);
@@ -244,12 +244,12 @@ public class GeneratedModel {
                                 }
                             }
                             if(!found) {
-                                Guard newGuard;
+                                TransitionLabel newGuard;
                                 try {
-                                    newGuard = new Guard(r.getRoleIdentity(), "access", f.getName(), "undefined purpose");
+                                    newGuard = new TransitionLabel(r.getRoleIdentity(), "access", f.getName(), "undefined purpose");
                                     Transition t = new Transition(foundMatch.getLabel(), toTest.getLabel(), newGuard);
                                     toTest.addToTransition(t, dataFlowModel.getSMStates());
-                                } catch (InvalidGuard ex) {
+                                } catch (InvalidTransitionLabel ex) {
                                     ex.printStackTrace();
                                 } catch (InvalidTransitionException ex) {
                                     Logger.getLogger(GeneratedModel.class.getName()).log(Level.SEVERE, null, ex);
@@ -261,12 +261,12 @@ public class GeneratedModel {
                             State createdNode = generateStateFromTable(clonedTable, toTest, dataFlowModel);
                             dataFlowModel.addState(createdNode);
                             // Create a transition
-                            Guard newGuard;
+                            TransitionLabel newGuard;
                             try {
-                                newGuard = new Guard(r.getRoleIdentity(), "access", f.getName(), "undefined purpose");
+                                newGuard = new TransitionLabel(r.getRoleIdentity(), "access", f.getName(), "undefined purpose");
                                 Transition t = new Transition(createdNode.getLabel(), toTest.getLabel(), newGuard);
                                 toTest.addToTransition(t, dataFlowModel.getSMStates());
-                            } catch (InvalidGuard ex) {
+                            } catch (InvalidTransitionLabel ex) {
                                 ex.printStackTrace();
                             } catch (InvalidTransitionException ex) {
                                 Logger.getLogger(GeneratedModel.class.getName()).log(Level.SEVERE, null, ex);
