@@ -374,4 +374,35 @@ public class StateMachine implements EventCapture {
 
         graph.display();
     }
+
+    /**
+     * Output a dataflow graph.
+     */
+    public final void visualiseAnnotatedGraph() {
+        Graph graph = new SingleGraph("Privacy Modeller");
+        String styleSheet ="edge {arrow-shape: arrow; arrow-size: 10px, 5px;}";
+        graph.addAttribute("ui.stylesheet",styleSheet);
+
+        for (Map.Entry<String, State> entry : this.states.entrySet())
+        {
+            Node n = graph.addNode(entry.getValue().getLabel());
+            // Generate the label for the fields
+            String label = ((StateNode) entry.getValue()).tableToString();
+            System.out.println(label);
+            n.addAttribute("ui.label", ((StateNode) entry.getValue()).getAutoLabel());
+            System.out.println(entry.getKey() + "/" + entry.getValue());
+        }
+
+        for (Map.Entry<String, State> entry : this.states.entrySet())
+        {
+            List<Transition> transitions = entry.getValue().getTransitions();
+            for(Transition t: transitions) {
+                AbstractEdge n = graph.addEdge(entry.getValue().getLabel() + "->" + t.readToLabel(), entry.getValue().getLabel(), t.readToLabel(), true);
+                n.addAttribute("ui.label", "|" + t.getLabel().getAttrribute("privacy") +"|");
+            }
+
+        }
+
+        graph.display();
+    }
 }

@@ -129,6 +129,27 @@ public class GeneratedModel {
     }
 
     /**
+     * Perform a pre order traversal to read all of the transitions
+     *
+     * @param node The start node of the data flow model
+     * @param states The map to store the created states in.
+     */
+    public List<Transition> getTransitions(State node, StateMachine dataFlowModel) throws InvalidStateMachineException {
+        // Display the label of the data flow node current position
+        List<Transition> tSet = new ArrayList<Transition>();
+
+        // Iterate over the outgoing transitions
+        Iterator iter = node.getTransitions().iterator();
+        while (iter.hasNext()) {
+            Transition read = (Transition) iter.next();
+            tSet.add(read);
+
+            preorderTraversal(dataFlowModel.getState(read.readToLabel()), dataFlowModel);
+        }
+        return tSet;
+    }
+
+    /**
      * Perform a pre order traversal of the data flow directed graph. As
      * it is a data flow model we assume there are no loops. If a loop is
      * mistakenly input then this traversal method will fail.

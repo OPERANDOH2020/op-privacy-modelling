@@ -3,17 +3,20 @@
     <roles>
         <role>
             <name>doctor</name>
-            <category>healthcare professional</category>
+            <category>health_care_professional</category>
             <reference>https://www.w3.org/TR/owl-ref#person</reference>
         </role>
         <role>
             <name>nurse</name>
-            <category>healthcare professional</category>
+            <category>health_care_professional</category>
             <reference>https://www.w3.org/TR/owl-ref</reference>
         </role>
     </roles>
     <records>
         <name>patient</name>
+        <categories>
+            <category>Medical</category>
+        </categories>
         <fields>
             <field>
                 <name>name</name>

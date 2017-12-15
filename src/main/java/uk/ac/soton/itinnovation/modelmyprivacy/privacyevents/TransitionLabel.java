@@ -26,6 +26,8 @@
 
 package uk.ac.soton.itinnovation.modelmyprivacy.privacyevents;
 
+import java.util.HashMap;
+import java.util.Map;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.InvalidRoleException;
 
 /**
@@ -81,6 +83,12 @@ public class TransitionLabel {
     }
 
     /**
+     * All transition labels can be annotated with a set of N attributes.
+     * These are stored in a hashmap.
+     */
+    private Map<String, Object> attributes;
+
+    /**
      * What will be used as the comparitor for the guard. If V is the tested
      * value; then when V is applied to the function the evaluation against
      * this compareto value must be true.
@@ -110,6 +118,20 @@ public class TransitionLabel {
         this.action = actionInput;
         this.data = dataInput;
         this.purpose = purposeInput;
+        this.attributes = new HashMap<>();
+    }
+
+    public void setAttribute(String attName, Object value) {
+        this.attributes.put(attName, value);
+    }
+    
+    /**
+     * Get the value of an attribute attached to the label
+     * @param attName The name id of the attribute.
+     * @return The stored value.
+     */
+    public Object getAttrribute(String attName){
+        return this.attributes.get(attName);
     }
 
     /**

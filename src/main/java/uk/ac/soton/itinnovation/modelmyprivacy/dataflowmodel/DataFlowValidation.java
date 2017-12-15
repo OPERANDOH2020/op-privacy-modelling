@@ -43,7 +43,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import org.xml.sax.SAXException;
-import uk.ac.soton.itinnovation.modelmyprivacy.lts.FileUtils;
+import uk.ac.soton.itinnovation.modelmyprivacy.utils.FileUtils;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.LTSLogger;
 
 /**

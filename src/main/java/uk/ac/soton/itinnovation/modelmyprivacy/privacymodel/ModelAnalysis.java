@@ -23,48 +23,35 @@
 //  License : GNU Lesser General Public License, version 3
 //
 /////////////////////////////////////////////////////////////////////////
+package uk.ac.soton.itinnovation.modelmyprivacy.privacymodel;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import uk.ac.soton.itinnovation.modelmyprivacy.utils.FileUtils;
+import java.util.List;
+import uk.ac.soton.itinnovation.PrivacyModel.GeneratedModel;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.InvalidStateMachineException;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.StateMachine;
-import uk.ac.soton.itinnovation.modelmyprivacy.lts.TraceGenerator;
-
+import uk.ac.soton.itinnovation.modelmyprivacy.lts.Transition;
+import uk.ac.soton.itinnovation.modelmyprivacy.privacyanlysis.PreferenceAnalysis;
+import uk.ac.soton.itinnovation.modelmyprivacy.privacyanlysis.PreferenceAnalysisAPI;
+import uk.ac.soton.itinnovation.modelmyprivacy.utils.FileUtils;
 
 /**
  *
- * @author pjg
+ * Set of operations to take a LTS model and annotate the transitions with
+ * privacy values {user preferences} and allowed actions.
  */
-public class PatternExecutionTest {
+public class ModelAnalysis {
 
+    public static void annotatePrivacyPreferences(String userInput, StateMachine model) throws InvalidStateMachineException {
+        String prefsModel = FileUtils.readJsonFromFile(userInput);
+        PreferenceAnalysisAPI prefsAPI = new PreferenceAnalysis();
+        PreferenceTree userPrefs = prefsAPI.buildPreferences(prefsModel);
 
-    /**
-     * Test a given patterns executes correctly. This is a compliance test.
-     */
-    public final void PatternTest() {
-        try {
-            final String sMachine = FileUtils.readFile("HelloWorld.xml", Charset.defaultCharset());
-
-             StateMachine stateMachine = new StateMachine();
-             stateMachine.buildDataFlowLTS(sMachine);
-
-            /*
-             * Start the model monitoring
-             */
-            TraceGenerator tG = new TraceGenerator();
-            tG.generateEvents("ServiceTrace.json", stateMachine);
-            stateMachine.start();
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (InvalidStateMachineException ex) {
-            ex.printStackTrace();
+        GeneratedModel gm = new GeneratedModel();
+        List<Transition> transitions = gm.getTransitions(model.getStartState(), model);
+        for(Transition t: transitions){
+            double privacyScore = prefsAPI.privacyScore(t, userPrefs);
+            t.getLabel().setAttribute("privacy", privacyScore);
         }
-     }
-
-    public static void main(String[] args) {
-        PatternExecutionTest tests = new PatternExecutionTest();
-        tests.PatternTest();
     }
+
 }

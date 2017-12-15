@@ -29,12 +29,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jdom.Document;
-import uk.ac.soton.itinnovation.PrivacyModel.GeneratedModel;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.Field;
-import uk.ac.soton.itinnovation.modelmyprivacy.lts.FileUtils;
+import uk.ac.soton.itinnovation.modelmyprivacy.utils.FileUtils;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.Role;
 import uk.ac.soton.itinnovation.modelmyprivacy.dataflowmodel.XMLDocument;
 import uk.ac.soton.itinnovation.modelmyprivacy.dataflowmodel.XMLStateMachine;
@@ -91,17 +88,8 @@ public class testOne {
          */
         StateMachine stateMachine = new StateMachine();
         stateMachine.buildDataFlowLTS(sMachine);
-//        stateMachine.visualiseDataFlowGraph();
-        /**
-         * Add the access policies
-         */
-        stateMachine.addAccessPolicies("unittests/testOne.json");
-        GeneratedModel gModel = new GeneratedModel();
-        try {
-            gModel.generateStates(stateMachine);
-            stateMachine.visualiseAutomatedGraph();
-        } catch (InvalidStateMachineException ex) {
-            Logger.getLogger(testOne.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        stateMachine.visualiseDataFlowGraph();
+
+
     }
 }

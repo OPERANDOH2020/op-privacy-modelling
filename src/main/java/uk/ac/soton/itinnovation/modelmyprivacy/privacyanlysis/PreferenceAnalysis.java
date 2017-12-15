@@ -100,10 +100,12 @@ public class PreferenceAnalysis implements PreferenceAnalysisAPI{
     public double privacyScore(Transition t, PreferenceTree prefs){
         TransitionLabel information  = t.getLabel();
         PreferencesModel model = new PreferencesModel();
+
+        String category = (String) information.getAttrribute("category");
         /**
          * First - Get the data category
          */
-        GraphPreference dataNode = model.findData(information.getData(), prefs);
+        GraphPreference dataNode = model.findData(category, prefs);
         /**
          * If there is no data category return the westin classification.
          */

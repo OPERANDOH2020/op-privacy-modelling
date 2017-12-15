@@ -1,8 +1,3 @@
-
-import uk.ac.soton.itinnovation.modelmyprivacy.privacyanlysis.PreferenceAnalysis;
-import uk.ac.soton.itinnovation.modelmyprivacy.privacyanlysis.PreferenceAnalysisAPI;
-import uk.ac.soton.itinnovation.modelmyprivacy.privacymodel.PreferenceTree;
-
 /////////////////////////////////////////////////////////////////////////
 //
 // © University of Southampton IT Innovation Centre, 2017
@@ -28,12 +23,12 @@ import uk.ac.soton.itinnovation.modelmyprivacy.privacymodel.PreferenceTree;
 //  License : GNU Lesser General Public License, version 3
 //
 /////////////////////////////////////////////////////////////////////////
+import uk.ac.soton.itinnovation.modelmyprivacy.privacyanlysis.PreferenceAnalysis;
+import uk.ac.soton.itinnovation.modelmyprivacy.privacyanlysis.PreferenceAnalysisAPI;
+import uk.ac.soton.itinnovation.modelmyprivacy.privacymodel.PreferenceTree;
 
 
-/**
- *
- * @author pjg
- */
+
 public class PreferenceModelTest {
 
     private static final String INPUT = "prefs.json";
