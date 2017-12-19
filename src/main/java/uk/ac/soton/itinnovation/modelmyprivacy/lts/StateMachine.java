@@ -347,7 +347,7 @@ public class StateMachine implements EventCapture {
     /**
      * Output a dataflow graph.
      */
-    public final void visualiseAutomatedGraph() {
+    public final void visualiseAutomatedGraph(boolean labels) {
         Graph graph = new SingleGraph("Privacy Modeller");
         String styleSheet ="edge {arrow-shape: arrow; arrow-size: 10px, 5px;}";
         graph.addAttribute("ui.stylesheet",styleSheet);
@@ -357,8 +357,8 @@ public class StateMachine implements EventCapture {
             Node n = graph.addNode(entry.getValue().getLabel());
             // Generate the label for the fields
             String label = ((StateNode) entry.getValue()).tableToString();
-            System.out.println(label);
-            n.addAttribute("ui.label", ((StateNode) entry.getValue()).getAutoLabel());
+            if(labels)
+                n.addAttribute("ui.label", ((StateNode) entry.getValue()).getAutoLabel());
             System.out.println(entry.getKey() + "/" + entry.getValue());
         }
 
@@ -367,7 +367,8 @@ public class StateMachine implements EventCapture {
             List<Transition> transitions = entry.getValue().getTransitions();
             for(Transition t: transitions) {
                 AbstractEdge n = graph.addEdge(entry.getValue().getLabel() + "->" + t.readToLabel(), entry.getValue().getLabel(), t.readToLabel(), true);
-                n.addAttribute("ui.label", "|" + t.getLabel().getRole()+ "|" + t.getLabel().getAction() +"|" + t.getLabel().getData()+" for " + t.getLabel().getPurpose()+"|");
+                if(labels)
+                    n.addAttribute("ui.label", "|" + t.getLabel().getRole()+ "|" + t.getLabel().getAction() +"|" + t.getLabel().getData()+" for " + t.getLabel().getPurpose()+"|");
             }
 
         }
@@ -400,9 +401,24 @@ public class StateMachine implements EventCapture {
                 AbstractEdge n = graph.addEdge(entry.getValue().getLabel() + "->" + t.readToLabel(), entry.getValue().getLabel(), t.readToLabel(), true);
                 n.addAttribute("ui.label", "|" + t.getLabel().getAttrribute("privacy") +"|");
             }
-
         }
 
         graph.display();
+    }
+
+    /**
+     * Perform a pre order traversal to read all of the transitions into the
+     * tSet paramater.
+     *
+     * @param node The start node of the data flow model
+     * @param dataFlowModel The state machine to retrieve transitions for.
+     * @param tSet array to fill with
+     * @throws uk.ac.soton.itinnovation.modelmyprivacy.lts.InvalidStateMachineException
+     */
+    public static void getTransitions(State node, StateMachine dataFlowModel, List<Transition> tSet) throws InvalidStateMachineException {
+        for (Transition read : node.getTransitions()) {
+            tSet.add(read);
+            getTransitions(dataFlowModel.getState(read.readToLabel()), dataFlowModel, tSet);
+        }
     }
 }

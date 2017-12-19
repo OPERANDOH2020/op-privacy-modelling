@@ -288,11 +288,11 @@ public final class XMLStateMachine {
      }
 
 
-     private static List<Field> readFields(Element fieldXML) {
+     private static List<Field> readFields(Element fieldXML, String dotIndex) {
          List<Field> fields = new ArrayList<>();
           List<Element> catFields = fieldXML.getChildren();
           for (Element e : catFields) {
-                fields.add(readField(e));
+                fields.add(readField(e, dotIndex));
           }
          return fields;
      }
@@ -303,8 +303,8 @@ public final class XMLStateMachine {
       * @param recField If this is a embedded record in the field
       * @return The created field.
       */
-    private static Field readField(Element fieldXML) {
-        Field newField = new Field(fieldXML.getChildText("name"));
+    private static Field readField(Element fieldXML, String dotIndex) {
+        Field newField = new Field(dotIndex + fieldXML.getChildText("name"));
 
         List<Element> catFields = fieldXML.getChild("categories").getChildren();
         for (Element catIndex : catFields) {
@@ -327,7 +327,7 @@ public final class XMLStateMachine {
         }
 
         if(fieldXML.getChild("fields") != null) {
-            List<Field> fields = readFields(fieldXML.getChild("fields"));
+            List<Field> fields = readFields(fieldXML.getChild("fields"), newField.getName()+".");
             newField.setRecordField(fields);
         }
 
@@ -353,18 +353,20 @@ public final class XMLStateMachine {
              * For each record:
              */
             for (Element recordIndex : xmlRecords) {
-                final String recordID = recordIndex.getChildText("name");
-                List<Element> fields = recordIndex.getChild("fields").getChildren();
-                Field record = new Field(recordID);
-                List<Field> fieldElements = new ArrayList<>();
-                /**
-                 * For each field in the record:
-                 */
-                for (Element fieldIndex : fields) {
-                    fieldElements.add(readField(fieldIndex));
-                }
-                record.setRecordField(fieldElements);
-                records.add(record);
+//                final String recordID = recordIndex.getChildText("name");
+//                List<Element> fields = recordIndex.getChild("fields").getChildren();
+//                Field record = new Field(recordID);
+//                List<Field> fieldElements = new ArrayList<>();
+//                /**
+//                 * For each field in the record:
+//                 */
+//                for (Element fieldIndex : fields) {
+//                    fieldElements.add(readField(fieldIndex));
+//                }
+//                record.setRecordField(fieldElements);
+//                records.add(record);
+                Field recordField = readField(recordIndex, "");
+                records.add(recordField);
             }
         } catch (JDOMException ex) {
             throw new InvalidStateMachineException("Invalid XML input - check XML syntax", ex);

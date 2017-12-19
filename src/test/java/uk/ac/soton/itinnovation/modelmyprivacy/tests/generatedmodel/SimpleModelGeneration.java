@@ -1,3 +1,5 @@
+package uk.ac.soton.itinnovation.modelmyprivacy.tests.generatedmodel;
+
 /////////////////////////////////////////////////////////////////////////
 //
 // © University of Southampton IT Innovation Centre, 2017
@@ -24,31 +26,21 @@
 //
 /////////////////////////////////////////////////////////////////////////
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.jdom.Document;
-import uk.ac.soton.itinnovation.PrivacyModel.GeneratedModel;
-import uk.ac.soton.itinnovation.modelmyprivacy.lts.Field;
 import uk.ac.soton.itinnovation.modelmyprivacy.utils.FileUtils;
-import uk.ac.soton.itinnovation.modelmyprivacy.lts.Role;
-import uk.ac.soton.itinnovation.modelmyprivacy.dataflowmodel.XMLDocument;
-import uk.ac.soton.itinnovation.modelmyprivacy.dataflowmodel.XMLStateMachine;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.InvalidStateMachineException;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.StateMachine;
-import uk.ac.soton.itinnovation.modelmyprivacy.privacymodel.ModelAnalysis;
+import uk.ac.soton.itinnovation.modelmyprivacy.modelgeneration.AccessPolicyModelGeneration;
 
 /**
- * Test class to test the creation of a data flow model from the XML specification.
+ * Test: takes the one transition data flow model and autogenerates and LTS
+ * model for the access policies on the model's data.
  */
 
-public class testThree {
+public class SimpleModelGeneration {
 
-    private final static String FILENAME = "unittests/testOne.xml";
+    private final static String FILENAME = "unittests/oneTransition.xml";
     /**
      * @param args the command line arguments
      */
@@ -64,47 +56,23 @@ public class testThree {
             System.err.println("Error Reading file" +  FILENAME);
             System.err.println("Error:" +  ex.getMessage());
         }
-        final Document model = XMLDocument.jDomReadXmlStream(
-                    new ByteArrayInputStream(sMachine.getBytes(StandardCharsets.UTF_8)));
-
-        /**
-         * View the roles in the data flow model
-         */
-        try {
-            List<Role> roles = XMLStateMachine.addRoles(model.getRootElement());
-            Role.printRoles(roles);
-        } catch (InvalidStateMachineException ex) {
-            System.err.println("Error adding roles to the model:" +  ex.getMessage());
-        }
-
-        /**
-         * View the data in the data flow model
-         */
-        try {
-            List<Field> data = XMLStateMachine.addRecords(model.getRootElement());
-            Field.printData(data);
-        } catch (InvalidStateMachineException ex) {
-            System.err.println("Error adding roles to the model:" +  ex.getMessage());
-        }
-
+        
         /**
          * Build a data flow directed graph and visualize
          */
         StateMachine stateMachine = new StateMachine();
         stateMachine.buildDataFlowLTS(sMachine);
-//        stateMachine.visualiseDataFlowGraph();
+
         /**
          * Add the access policies
          */
-        stateMachine.addAccessPolicies("unittests/testOne.json");
-        GeneratedModel gModel = new GeneratedModel();
+        stateMachine.addAccessPolicies("unittests/oneTransition.json");
+        AccessPolicyModelGeneration gModel = new AccessPolicyModelGeneration();
         try {
             gModel.generateStates(stateMachine);
-            ModelAnalysis.annotatePrivacyPreferences("unittests/prefs.json", stateMachine);
-
-            stateMachine.visualiseAnnotatedGraph();
+            stateMachine.visualiseAutomatedGraph(true);
         } catch (InvalidStateMachineException ex) {
-            Logger.getLogger(testOne.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("Error generating new states automatically - " + ex.getMessage());
         }
     }
 }

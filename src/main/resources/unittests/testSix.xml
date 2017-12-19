@@ -21,9 +21,16 @@
             <field>
                 <name>name</name>
                 <categories>
-                    <category>contact</category>
+                    <category>Medical</category>
                 </categories>
                 <type>ei</type>
+            </field>
+            <field>
+                <name>weight</name>
+                <categories>
+                    <category>Medical</category>
+                </categories>
+                <type>sensitive</type>
             </field>
         </fields>
     </records>
@@ -33,10 +40,22 @@
           <label>service_registration</label>
           <type>start</type>
           <transition>    
-                <to>finish</to>
+                <to>new_field</to>
                 <action>create</action>
                 <role>service_register</role>
-                <data>patient</data>
+                <data>patient.name</data>
+                <purpose>Service usage</purpose>
+           </transition>
+        </state>
+        
+        <state>
+          <label>new_field</label>
+          <type>normal</type>
+          <transition>    
+                <to>finish</to>
+                <action>create</action>
+                <role>doctor</role>
+                <data>patient.weight</data>
                 <purpose>Service usage</purpose>
            </transition>
         </state>

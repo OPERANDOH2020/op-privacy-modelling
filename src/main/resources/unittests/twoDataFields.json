@@ -1,0 +1,31 @@
+{
+   "policy_text":"test one",
+   "policy_url":"testOne",
+
+   "policies":[
+      {
+         "subject":"doctor",
+         "permission":true,
+         "action":"Access",
+         "resource":"patient.name"
+      },
+      {
+         "subject":"nurse",
+         "permission":true,
+         "action":"Access",
+         "resource":"patient.name"
+      },
+      {
+         "subject":"doctor",
+         "permission":true,
+         "action":"Access",
+         "resource":"patient.weight"
+      },
+      {
+         "subject":"nurse",
+         "permission":true,
+         "action":"Access",
+         "resource":"patient.weight"
+      }
+   ]
+}

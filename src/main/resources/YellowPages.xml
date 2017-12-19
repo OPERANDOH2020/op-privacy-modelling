@@ -22,6 +22,9 @@
     </roles>
     <records>
         <name>patient</name>
+        <categories>
+            <category>biometric</category>
+        </categories>
         <fields>
             <field>
                 <name>name</name>

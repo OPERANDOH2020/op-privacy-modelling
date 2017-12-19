@@ -25,8 +25,9 @@
 /////////////////////////////////////////////////////////////////////////
 package uk.ac.soton.itinnovation.modelmyprivacy.privacymodel;
 
+import java.util.ArrayList;
 import java.util.List;
-import uk.ac.soton.itinnovation.PrivacyModel.GeneratedModel;
+import uk.ac.soton.itinnovation.modelmyprivacy.lts.Field;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.InvalidStateMachineException;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.StateMachine;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.Transition;
@@ -41,14 +42,61 @@ import uk.ac.soton.itinnovation.modelmyprivacy.utils.FileUtils;
  */
 public class ModelAnalysis {
 
+
+    public static void generateEndFields(List<Field> recordStructure, List<Field> outputNodes) {
+        for (Field f: recordStructure) {
+            if(f.getRecord()) {
+                generateEndFields(f.getRecordField(), outputNodes);
+            }
+            else {
+                outputNodes.add(f);
+            }
+        }
+    }
+
+    /**
+     * For a data field return the list of categories attached to it.
+     * @param dataID The field name id.
+     * @param model The model the field is specified in.
+     * @return The list of categories.
+     */
+    public static List<String> getCategory(String dataID, StateMachine model) {
+        List<String> categories = new ArrayList<>();
+
+        List<Field> outputFields = new ArrayList<>();
+        generateEndFields(model.getData(), outputFields);
+        for(Field f: outputFields) {
+            if(f.getName().equalsIgnoreCase(dataID))
+                return f.getCategory();
+        }
+        return categories;
+    }
+
+    /**
+     * Attach the data category value to each transition is the model.
+     * @param model
+     * @throws InvalidStateMachineException
+     */
+    public static void annotateCategoryData(StateMachine model) throws InvalidStateMachineException {
+
+        List<Transition> transitions = new ArrayList<>();
+        StateMachine.getTransitions(model.getStartState(), model, transitions);
+        for (Transition t : transitions) {
+            List<String> category = getCategory(t.getLabel().getData(), model);
+            if(category.size() > 0) {
+                t.getLabel().setAttribute("category", category.get(0));
+            }
+        }
+    }
+
     public static void annotatePrivacyPreferences(String userInput, StateMachine model) throws InvalidStateMachineException {
         String prefsModel = FileUtils.readJsonFromFile(userInput);
         PreferenceAnalysisAPI prefsAPI = new PreferenceAnalysis();
         PreferenceTree userPrefs = prefsAPI.buildPreferences(prefsModel);
 
-        GeneratedModel gm = new GeneratedModel();
-        List<Transition> transitions = gm.getTransitions(model.getStartState(), model);
-        for(Transition t: transitions){
+        List<Transition> transitions = new ArrayList<>();
+        StateMachine.getTransitions(model.getStartState(), model, transitions);
+        for (Transition t : transitions) {
             double privacyScore = prefsAPI.privacyScore(t, userPrefs);
             t.getLabel().setAttribute("privacy", privacyScore);
         }

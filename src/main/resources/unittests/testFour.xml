@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<Model  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <roles>
+        <role>
+            <name>doctor</name>
+            <category>health_care_professional</category>
+            <reference>https://www.w3.org/TR/owl-ref#person</reference>
+        </role>
+        <role>
+            <name>nurse</name>
+            <category>health_care_professional</category>
+            <reference>https://www.w3.org/TR/owl-ref</reference>
+        </role>
+        <role>
+            <name>admin</name>
+            <category>admin</category>
+            <reference>https://www.w3.org/TR/owl-ref</reference>
+        </role>
+    </roles>
+    <records>
+        <name>patient</name>
+        <categories>
+            <category>Medical</category>
+        </categories>
+        <fields>
+            <field>
+                <name>name</name>
+                <categories>
+                    <category>Medical</category>
+                </categories>
+                <type>ei</type>
+            </field>
+        </fields>
+    </records>
+    
+     <lts>
+        <state>
+          <label>service_registration</label>
+          <type>start</type>
+          <transition>    
+                <to>doctor_read</to>
+                <action>create</action>
+                <role>service_register</role>
+                <data>patient.name</data>
+                <purpose>Service usage</purpose>
+           </transition>
+        </state>
+
+        <state>
+          <label>doctor_read</label>
+          <type>start</type>
+          <transition>    
+                <to>nurse_read</to>
+                <action>access</action>
+                <role>doctor</role>
+                <data>patient.name</data>
+                <purpose>Primary Care</purpose>
+           </transition>
+        </state>
+
+        <state>
+          <label>nurse_read</label>
+          <type>start</type>
+          <transition>    
+                <to>finish</to>
+                <action>access</action>
+                <role>nurse</role>
+                <data>patient.name</data>
+                <purpose>Primary Care</purpose>
+           </transition>
+        </state>
+
+        <state>
+            <label>finish</label>
+            <type>end</type>
+        </state>
+    </lts>
+</Model>

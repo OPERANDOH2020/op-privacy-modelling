@@ -23,7 +23,7 @@
 //  License : GNU Lesser General Public License, version 3
 //
 /////////////////////////////////////////////////////////////////////////
-package uk.ac.soton.itinnovation.PrivacyModel;
+package uk.ac.soton.itinnovation.modelmyprivacy.modelgeneration;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -49,9 +49,7 @@ import uk.ac.soton.itinnovation.modelmyprivacy.privacyevents.TransitionLabel;
  * 1) The dataflow model (including the roles and data)
  * 2) The access control policies on data.
  */
-public class GeneratedModel {
-
-
+public class AccessPolicyModelGeneration {
 
 //    private void generatePolicyTransition(State node, Map<String, State> states) {
 //        /**
@@ -87,10 +85,35 @@ public class GeneratedModel {
         /**
          * Copy the state variables from the previous node
          */
+        List<Field> outputFields = new ArrayList<>();
+        generateEndFields(previousGeneratedState.getStateMachine().getData(), outputFields);
         automatedNode.overwriteStateVariables(previousGeneratedState.getStateMachine().getRoles(),
-                previousGeneratedState.getStateMachine().getData(), clonedTable);
+                outputFields, clonedTable);
 
         return automatedNode;
+    }
+
+    /**
+     * Create a state in the model based upon the create action in the
+     * transition, and then generate the transitions that could lead to this
+     * generated state.
+     * @param dataFlowTransition
+     * @param previousGeneratedState
+     * @return
+     */
+    private State generateStateFromAccessAction(Transition dataFlowTransition,
+            StateNode previousGeneratedState, StateMachine sm) throws InvalidStateMachineException {
+        StateNode accessNode  = (StateNode) sm.getState(dataFlowTransition.readToLabel());
+
+        /**
+         * Copy the state variables from the previous node
+         */
+        List<Field> outputFields = new ArrayList<>();
+        generateEndFields(previousGeneratedState.getStateMachine().getData(), outputFields);
+        accessNode.overwriteStateVariables(previousGeneratedState.getStateMachine().getRoles(),
+                outputFields, previousGeneratedState.getStateVariables());
+        accessNode.changeSeenStateVariable(dataFlowTransition.getLabel().getRole(), dataFlowTransition.getLabel().getData(), true);
+        return accessNode;
     }
 
     /**
@@ -109,44 +132,24 @@ public class GeneratedModel {
         /**
          * Copy the state variables from the previous node
          */
+        List<Field> outputFields = new ArrayList<>();
+        generateEndFields(previousGeneratedState.getStateMachine().getData(), outputFields);
         createNode.overwriteStateVariables(previousGeneratedState.getStateMachine().getRoles(),
-                previousGeneratedState.getStateMachine().getData(), previousGeneratedState.getStateVariables());
+                outputFields, previousGeneratedState.getStateVariables());
 
         /**
          * Update the stateVariables with the new created field permisions.
-         * Currently assume it is a single field. To do - change to record with
-         * n fields.
+         * Currently assume it is a single field.
          */
-        String fieldName = dataFlowTransition.getLabel().getData();
-
-        // Get the permissions for the field.
-        List<String> canAccess = sm.getAccessPolicies().canAccessField(fieldName);
-        for(String allowedRole: canAccess){
-            createNode.changeStateVariable(allowedRole, fieldName, true);
+        for(Field f: outputFields){
+//            String fName = dataFlowTransition.getLabel().getData();
+            // Get the permissions for the field.
+            List<String> canAccess = sm.getAccessPolicies().canAccessField(f.getName());
+            for(String allowedRole: canAccess){
+                createNode.changeStateVariable(allowedRole, f.getName(), true);
+            }
         }
-
         return createNode;
-    }
-
-    /**
-     * Perform a pre order traversal to read all of the transitions
-     *
-     * @param node The start node of the data flow model
-     * @param states The map to store the created states in.
-     */
-    public List<Transition> getTransitions(State node, StateMachine dataFlowModel) throws InvalidStateMachineException {
-        // Display the label of the data flow node current position
-        List<Transition> tSet = new ArrayList<Transition>();
-
-        // Iterate over the outgoing transitions
-        Iterator iter = node.getTransitions().iterator();
-        while (iter.hasNext()) {
-            Transition read = (Transition) iter.next();
-            tSet.add(read);
-
-            preorderTraversal(dataFlowModel.getState(read.readToLabel()), dataFlowModel);
-        }
-        return tSet;
     }
 
     /**
@@ -176,6 +179,7 @@ public class GeneratedModel {
                     break;
                 case "access":
                     // change the seen state variables of nodes that exist
+                    State accessNode = generateStateFromAccessAction(toProduce, (StateNode) node, dataFlowModel);
             }
             preorderTraversal(dataFlowModel.getState(toProduce.readToLabel()), dataFlowModel);
         }
@@ -216,6 +220,17 @@ public class GeneratedModel {
         return clonedTable;
     }
 
+    public void generateEndFields(List<Field> recordStructure, List<Field> outputNodes) {
+        for (Field f: recordStructure) {
+            if(f.getRecord()) {
+                generateEndFields(f.getRecordField(), outputNodes);
+            }
+            else {
+                outputNodes.add(f);
+            }
+        }
+    }
+
     /**
      * Primary method to call to generate a first version of the model
      * @param dataFlowModel The created data flow model from the initial specification.
@@ -228,7 +243,9 @@ public class GeneratedModel {
          * state variables are set to false.
          */
         StateNode startNode = (StateNode) dataFlowModel.getStartState();
-        startNode.initialiseStateVariables(dataFlowModel.getRoles(), dataFlowModel.getData());
+        List<Field> outputFields = new ArrayList<>();
+        generateEndFields(dataFlowModel.getData(), outputFields);
+        startNode.initialiseStateVariables(dataFlowModel.getRoles(), outputFields);
 
         /**
          * We now traverse the dataflow model and build the new states
@@ -240,7 +257,7 @@ public class GeneratedModel {
          */
         for(int i=0; i<2; i++) {
             for(Role r: dataFlowModel.getRoles()) {
-                for(Field f: dataFlowModel.getData()) {
+                for(Field f: outputFields) {
                     List<StateNode> targetNodes = getNodesCanButNotSeen(r.getRoleIdentity(), f.getName(), dataFlowModel);
                     /**
                      * For each node - find the node where the same variables plus seen exist
@@ -256,7 +273,6 @@ public class GeneratedModel {
                         StateNode foundMatch= getNodeMatch(clonedTable, dataFlowModel);
                         if(foundMatch != null) {
                             // create a new transition between the two states (if the transition isn't there)
-                            System.out.println("******************");
                             boolean found = false;
                             for(Transition existingT: toTest.getTransitions()) {
                                 if(existingT.readToLabel().equalsIgnoreCase(foundMatch.getLabel())){
@@ -273,26 +289,27 @@ public class GeneratedModel {
                                 } catch (InvalidTransitionLabel ex) {
                                     ex.printStackTrace();
                                 } catch (InvalidTransitionException ex) {
-                                    Logger.getLogger(GeneratedModel.class.getName()).log(Level.SEVERE, null, ex);
+                                    ex.printStackTrace();
                                 }
                             }
                         }
                         else {
-                            // create the node and add a transition
-                            State createdNode = generateStateFromTable(clonedTable, toTest, dataFlowModel);
-                            dataFlowModel.addState(createdNode);
-                            // Create a transition
-                            TransitionLabel newGuard;
-                            try {
-                                newGuard = new TransitionLabel(r.getRoleIdentity(), "access", f.getName(), "undefined purpose");
-                                Transition t = new Transition(createdNode.getLabel(), toTest.getLabel(), newGuard);
-                                toTest.addToTransition(t, dataFlowModel.getSMStates());
-                            } catch (InvalidTransitionLabel ex) {
-                                ex.printStackTrace();
-                            } catch (InvalidTransitionException ex) {
-                                Logger.getLogger(GeneratedModel.class.getName()).log(Level.SEVERE, null, ex);
+                            if(!transitionExists(r.getRoleIdentity(), f.getName(), "access", dataFlowModel)) {
+                                // create the node and add a transition
+                                State createdNode = generateStateFromTable(clonedTable, toTest, dataFlowModel);
+                                dataFlowModel.addState(createdNode);
+                                // Create a transition
+                                TransitionLabel newGuard;
+                                try {
+                                    newGuard = new TransitionLabel(r.getRoleIdentity(), "access", f.getName(), "undefined purpose");
+                                    Transition t = new Transition(createdNode.getLabel(), toTest.getLabel(), newGuard);
+                                    toTest.addToTransition(t, dataFlowModel.getSMStates());
+                                } catch (InvalidTransitionLabel ex) {
+                                    ex.printStackTrace();
+                                } catch (InvalidTransitionException ex) {
+                                    ex.printStackTrace();
+                                }
                             }
-
                         }
                     }
                 }
@@ -300,5 +317,22 @@ public class GeneratedModel {
         }
     }
 
+    private boolean transitionExists(String role, String field, String action, StateMachine sm) {
+        try {
+            List<Transition> tSet = new ArrayList<>();
+            StateMachine.getTransitions(sm.getStartState(), sm, tSet);
+            for(Transition t: tSet) {
+                if((action.equalsIgnoreCase(t.getLabel().getAction())) &&
+                        (role.equalsIgnoreCase(t.getLabel().getRole())) &&
+                                (field.equalsIgnoreCase(t.getLabel().getData()))){
+                    return t.getLabel().getPurpose() != "undefined purpose";
+                }
+
+            }
+        } catch (InvalidStateMachineException ex) {
+            Logger.getLogger(AccessPolicyModelGeneration.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
 
 }

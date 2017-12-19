@@ -118,7 +118,7 @@ public class PreferenceAnalysis implements PreferenceAnalysisAPI{
         if(preferenceListFromRole != null) {
             for(UserPreference index: preferenceListFromRole){
                 if(index.getAction().equalsIgnoreCase(information.getAction())) {
-                    if(index.getPurpose().equalsIgnoreCase(information.getPurpose()))
+                    if((index.getPurpose().equalsIgnoreCase("any")) || (index.getPurpose().equalsIgnoreCase(information.getPurpose())))
                         return new Integer(index.getPreference());
                 }
             }

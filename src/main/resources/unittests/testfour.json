@@ -7,13 +7,19 @@
          "subject":"doctor",
          "permission":true,
          "action":"Access",
-         "resource":"patient"
+         "resource":"patient.name"
       },
       {
          "subject":"nurse",
          "permission":true,
          "action":"Access",
-         "resource":"patient"
+         "resource":"patient.name"
+      },
+      {
+         "subject":"admin",
+         "permission":true,
+         "action":"Access",
+         "resource":"patient.name"
       }
    ]
 }
