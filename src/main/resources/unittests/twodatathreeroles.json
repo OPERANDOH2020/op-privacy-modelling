@@ -10,6 +10,12 @@
          "resource":"patient.name"
       },
       {
+         "subject":"admin",
+         "permission":true,
+         "action":"Access",
+         "resource":"patient.name"
+      },
+      {
          "subject":"nurse",
          "permission":true,
          "action":"Access",
@@ -26,31 +32,6 @@
          "permission":true,
          "action":"Access",
          "resource":"patient.weight"
-      },
-      {
-         "subject":"doctor",
-         "permission":true,
-         "action":"Access",
-         "resource":"patient.diagnosis"
-      },
-      {
-         "subject":"nurse",
-         "permission":true,
-         "action":"Access",
-         "resource":"patient.diagnosis"
-      },
-      {
-         "subject":"doctor",
-         "permission":true,
-         "action":"Access",
-         "resource":"patient.age"
-      },
-      {
-         "subject":"nurse",
-         "permission":true,
-         "action":"Access",
-         "resource":"patient.age"
       }
-      
    ]
 }

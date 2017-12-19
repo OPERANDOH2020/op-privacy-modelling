@@ -357,6 +357,7 @@ public class StateMachine implements EventCapture {
             Node n = graph.addNode(entry.getValue().getLabel());
             // Generate the label for the fields
             String label = ((StateNode) entry.getValue()).tableToString();
+            System.out.println(label);
             if(labels)
                 n.addAttribute("ui.label", ((StateNode) entry.getValue()).getAutoLabel());
             System.out.println(entry.getKey() + "/" + entry.getValue());

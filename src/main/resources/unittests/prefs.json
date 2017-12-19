@@ -34,6 +34,15 @@
         "action": "Access",
         "purpose": "ANY",
         "recipient": "none"
+    },
+    {
+        "informationtype": "ANY",
+        "category": "Medical",
+        "preference": "2",
+        "role": "admin",
+        "action": "Access",
+        "purpose": "ANY",
+        "recipient": "none"
     },{
         "informationtype": "anthropometric_data",
         "category": "Medical",

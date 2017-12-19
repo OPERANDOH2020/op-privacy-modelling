@@ -98,6 +98,7 @@ public class ModelAnalysis {
         StateMachine.getTransitions(model.getStartState(), model, transitions);
         for (Transition t : transitions) {
             double privacyScore = prefsAPI.privacyScore(t, userPrefs);
+            System.out.println(t.getLabel().getRole() + ":" + privacyScore);
             t.getLabel().setAttribute("privacy", privacyScore);
         }
     }

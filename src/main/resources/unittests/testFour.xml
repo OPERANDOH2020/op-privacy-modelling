@@ -41,7 +41,7 @@
                 <to>doctor_read</to>
                 <action>create</action>
                 <role>service_register</role>
-                <data>patient.name</data>
+                <data>patient</data>
                 <purpose>Service usage</purpose>
            </transition>
         </state>

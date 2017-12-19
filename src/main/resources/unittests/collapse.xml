@@ -62,14 +62,14 @@
                 <to>doctor_read</to>
                 <action>create</action>
                 <role>service_register</role>
-                <data>patient.name</data>
+                <data>patient</data>
                 <purpose>Service usage</purpose>
            </transition>
         </state>
 
         <state>
           <label>doctor_read</label>
-          <type>start</type>
+          <type>normal</type>
           <transition>    
                 <to>nurse_read</to>
                 <action>access</action>
@@ -81,9 +81,9 @@
         
         <state>
           <label>doctor_read</label>
-          <type>start</type>
+          <type>normal</type>
           <transition>    
-                <to>nurse_read</to>
+                <to>doctor_read2</to>
                 <action>access</action>
                 <role>doctor</role>
                 <data>patient.name</data>
@@ -92,8 +92,8 @@
         </state>
         
         <state>
-          <label>doctor_read</label>
-          <type>start</type>
+          <label>doctor_read2</label>
+          <type>normal</type>
           <transition>    
                 <to>nurse_read</to>
                 <action>access</action>
@@ -105,7 +105,7 @@
 
         <state>
           <label>nurse_read</label>
-          <type>start</type>
+          <type>normal</type>
           <transition>    
                 <to>finish</to>
                 <action>access</action>

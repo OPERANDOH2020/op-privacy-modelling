@@ -43,7 +43,7 @@ import uk.ac.soton.itinnovation.modelmyprivacy.privacymodel.ModelAnalysis;
 
 public class PrivacyAnnotation {
 
-    private final static String FILENAME = "unittests/OneTransition.xml";
+    private final static String FILENAME = "unittests/testFour.xml";
     /**
      * @param args the command line arguments
      */
@@ -69,12 +69,12 @@ public class PrivacyAnnotation {
         /**
          * Add the access policies
          */
-        stateMachine.addAccessPolicies("unittests/OneTransition.json");
+        stateMachine.addAccessPolicies("unittests/twoDataFields.json");
         AccessPolicyModelGeneration gModel = new AccessPolicyModelGeneration();
         try {
             gModel.generateStates(stateMachine);
+            ModelAnalysis.annotateCategoryData(stateMachine);
             ModelAnalysis.annotatePrivacyPreferences("unittests/prefs.json", stateMachine);
-
             stateMachine.visualiseAnnotatedGraph();
         } catch (InvalidStateMachineException ex) {
             Logger.getLogger(SimpleDataFlowModel.class.getName()).log(Level.SEVERE, null, ex);

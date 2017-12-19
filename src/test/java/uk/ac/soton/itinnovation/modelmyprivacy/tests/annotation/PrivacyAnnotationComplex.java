@@ -1,4 +1,4 @@
-package uk.ac.soton.itinnovation.modelmyprivacy.tests.generatedmodel;
+package uk.ac.soton.itinnovation.modelmyprivacy.tests.annotation;
 
 /////////////////////////////////////////////////////////////////////////
 //
@@ -27,30 +27,23 @@ package uk.ac.soton.itinnovation.modelmyprivacy.tests.generatedmodel;
 /////////////////////////////////////////////////////////////////////////
 
 import uk.ac.soton.itinnovation.modelmyprivacy.tests.dataflowmodel.SimpleDataFlowModel;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.jdom.Document;
-import uk.ac.soton.itinnovation.modelmyprivacy.lts.Field;
 import uk.ac.soton.itinnovation.modelmyprivacy.utils.FileUtils;
-import uk.ac.soton.itinnovation.modelmyprivacy.lts.Role;
-import uk.ac.soton.itinnovation.modelmyprivacy.dataflowmodel.XMLDocument;
-import uk.ac.soton.itinnovation.modelmyprivacy.dataflowmodel.XMLStateMachine;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.InvalidStateMachineException;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.StateMachine;
 import uk.ac.soton.itinnovation.modelmyprivacy.modelgeneration.AccessPolicyModelGeneration;
+import uk.ac.soton.itinnovation.modelmyprivacy.privacymodel.ModelAnalysis;
 
 /**
- * Test class to test the creation of a data flow model from the XML specification.
+ * We annotate the transitions of the data model with privacy prefs.
  */
 
-public class testSix {
+public class PrivacyAnnotationComplex {
 
-    private final static String FILENAME = "unittests/testSix.xml";
+    private final static String FILENAME = "unittests/collapse.xml";
     /**
      * @param args the command line arguments
      */
@@ -66,44 +59,23 @@ public class testSix {
             System.err.println("Error Reading file" +  FILENAME);
             System.err.println("Error:" +  ex.getMessage());
         }
-        final Document model = XMLDocument.jDomReadXmlStream(
-                    new ByteArrayInputStream(sMachine.getBytes(StandardCharsets.UTF_8)));
-
-        /**
-         * View the roles in the data flow model
-         */
-        try {
-            List<Role> roles = XMLStateMachine.addRoles(model.getRootElement());
-            Role.printRoles(roles);
-        } catch (InvalidStateMachineException ex) {
-            System.err.println("Error adding roles to the model:" +  ex.getMessage());
-        }
-
-        /**
-         * View the data in the data flow model
-         */
-        try {
-            List<Field> data = XMLStateMachine.addRecords(model.getRootElement());
-            Field.printData(data);
-        } catch (InvalidStateMachineException ex) {
-            System.err.println("Error adding roles to the model:" +  ex.getMessage());
-        }
 
         /**
          * Build a data flow directed graph and visualize
          */
         StateMachine stateMachine = new StateMachine();
         stateMachine.buildDataFlowLTS(sMachine);
-//        stateMachine.visualiseDataFlowGraph();
+
         /**
          * Add the access policies
          */
-        stateMachine.addAccessPolicies("unittests/testSix.json");
+        stateMachine.addAccessPolicies("unittests/twodatathreeroles.json");
         AccessPolicyModelGeneration gModel = new AccessPolicyModelGeneration();
         try {
             gModel.generateStates(stateMachine);
-            stateMachine.visualiseAutomatedGraph(true);
-            stateMachine.visualiseAutomatedGraph(false);
+            ModelAnalysis.annotateCategoryData(stateMachine);
+            ModelAnalysis.annotatePrivacyPreferences("unittests/prefs.json", stateMachine);
+            stateMachine.visualiseAnnotatedGraph();
         } catch (InvalidStateMachineException ex) {
             Logger.getLogger(SimpleDataFlowModel.class.getName()).log(Level.SEVERE, null, ex);
         }

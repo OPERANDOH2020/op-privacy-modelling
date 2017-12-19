@@ -1,3 +1,5 @@
+package uk.ac.soton.itinnovation.modelmyprivacy.tests.generatedmodel;
+
 /////////////////////////////////////////////////////////////////////////
 //
 // © University of Southampton IT Innovation Centre, 2017
@@ -41,15 +43,14 @@ import uk.ac.soton.itinnovation.modelmyprivacy.dataflowmodel.XMLStateMachine;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.InvalidStateMachineException;
 import uk.ac.soton.itinnovation.modelmyprivacy.lts.StateMachine;
 import uk.ac.soton.itinnovation.modelmyprivacy.modelgeneration.AccessPolicyModelGeneration;
-import uk.ac.soton.itinnovation.modelmyprivacy.privacymodel.ModelAnalysis;
 
 /**
  * Test class to test the creation of a data flow model from the XML specification.
  */
 
-public class testFour {
+public class collapsedLTS {
 
-    private final static String FILENAME = "unittests/testOne.xml";
+    private final static String FILENAME = "unittests/collapse.xml";
     /**
      * @param args the command line arguments
      */
@@ -93,18 +94,16 @@ public class testFour {
          */
         StateMachine stateMachine = new StateMachine();
         stateMachine.buildDataFlowLTS(sMachine);
-
+//        stateMachine.visualiseDataFlowGraph();
         /**
          * Add the access policies
          */
-        stateMachine.addAccessPolicies("unittests/testOne.json");
+        stateMachine.addAccessPolicies("unittests/collapse.json");
         AccessPolicyModelGeneration gModel = new AccessPolicyModelGeneration();
         try {
             gModel.generateStates(stateMachine);
-            ModelAnalysis.annotateCategoryData(stateMachine);
-            ModelAnalysis.annotatePrivacyPreferences("unittests/prefs.json", stateMachine);
-
-            stateMachine.visualiseAnnotatedGraph();
+            stateMachine.visualiseAutomatedGraph(true);
+            stateMachine.visualiseAutomatedGraph(false);
         } catch (InvalidStateMachineException ex) {
             Logger.getLogger(SimpleDataFlowModel.class.getName()).log(Level.SEVERE, null, ex);
         }
