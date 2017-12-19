@@ -63,4 +63,4 @@ The following are a list of further documents in order to use the tool to develo
 The following developers contributed to the creation of the ModelInterop tool: 
 * Paul Grace, IT Innovation, University of Southampton [Web page] (http://www.ecs.soton.ac.uk/people/pjg1f12) [Github page] (https://github.com/pjgrace)
 * Dan Burns, IT Innovation, University of Southampton  
-* Geoff Neuman, IT Innovation, University of Southampton
+* Geoff Neumann, IT Innovation, University of Southampton
