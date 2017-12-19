@@ -141,3 +141,9 @@ To visualise the current data flow (using the GraphStream library)
     stateMachine.visualiseDataFlowGraph();
 
 ```
+
+This will then generate the following visualisation of the simple data flow:
+
+![Data flow visualisation output][viz1] 
+
+[viz1]: src/main/resources/images/visual2.png "Data flow visualisation"
