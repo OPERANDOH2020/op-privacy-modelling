@@ -353,18 +353,6 @@ public final class XMLStateMachine {
              * For each record:
              */
             for (Element recordIndex : xmlRecords) {
-//                final String recordID = recordIndex.getChildText("name");
-//                List<Element> fields = recordIndex.getChild("fields").getChildren();
-//                Field record = new Field(recordID);
-//                List<Field> fieldElements = new ArrayList<>();
-//                /**
-//                 * For each field in the record:
-//                 */
-//                for (Element fieldIndex : fields) {
-//                    fieldElements.add(readField(fieldIndex));
-//                }
-//                record.setRecordField(fieldElements);
-//                records.add(record);
                 Field recordField = readField(recordIndex, "");
                 records.add(recordField);
             }

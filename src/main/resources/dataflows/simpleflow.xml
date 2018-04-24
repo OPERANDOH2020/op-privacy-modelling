@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<dfd  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <roles>
+        <role>
+            <name>doctor</name>
+            <category>health_care_professional</category>
+            <reference>https://www.w3.org/TR/owl-ref#person</reference>
+        </role>
+        <role>
+            <name>nurse</name>
+            <category>health_care_professional</category>
+            <reference>https://www.w3.org/TR/owl-ref</reference>
+        </role>
+    </roles>
+    <records>
+        <name>patient</name>
+        <categories>
+            <category>Medical</category>
+        </categories>
+        <fields>
+            <field>
+                <name>name</name>
+                <categories>
+                    <category>Medical</category>
+                </categories>
+                <type>ei</type>
+            </field>
+        </fields>
+    </records>
+    
+    <flow>
+        <actor>
+            <label>subject</label>
+            <id>component1</id>
+            <flow>
+                <to>component2</to>
+                <data>
+                    <field>patient.name</field>
+                </data>
+                <purpose>appointment request</purpose>
+                <sequence>1</sequence>
+            </flow>
+        </actor>
+
+        <actor>
+            <label>receptionist</label>
+            <id>component3</id>
+            <flow>
+                <to>EHR</to>
+                <data>
+                    <field>name</field>
+                    <field>date of birth</field>
+                </data>
+                <purpose>appointment request</purpose>
+                <sequence>1</sequence>
+            </flow>
+        </actor>
+    
+        <datastore>
+            <label>EHR</label>
+            <to>component3</to>
+        </datastore>
+    </flow>
+    
+</dfd>
